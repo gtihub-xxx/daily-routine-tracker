@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ルーティン記録アプリ v2.2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .version-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .date {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .routine-section {
+            margin-bottom: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .section-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .streak-badge {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .textarea-field {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            min-height: 60px;
+            resize: vertical;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+
+        .study-item {
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .study-item-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .study-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .study-checkbox input {
+            margin-right: 8px;
+        }
+
+        .study-checkbox.checked {
+            color: #4caf50;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .checkbox-item.checked {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .time-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .calendar-header {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-date {
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .calendar-date.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .calendar-date.today {
+            background: #2196f3;
+            color: white;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .data-controls {
+            margin-bottom: 20px;
+        }
+
+        .data-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .data-btn:hover {
+            background: #5a6268;
+        }
+
+        .data-btn.export {
+            background: #28a745;
+        }
+
+        .data-btn.import {
+            background: #007bff;
+        }
+
+        .data-btn.clear {
+            background: #dc3545;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .app-info {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .storage-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .memo-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="version-badge">v2.2</div>
+            <div class="date" id="currentDate"></div>
+            <div class="subtitle">今日のルーティンを記録しましょう</div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('record')">記録</button>
+            <button class="nav-tab" onclick="showTab('history')">履歴</button>
+            <button class="nav-tab" onclick="showTab('settings')">設定</button>
+        </div>
+
+        <div class="content">
+            <!-- 記録タブ -->
+            <div class="section active" id="record">
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">💪 運動</span>
+                        <span class="streak-badge" id="exerciseStreak">0日継続</span>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">腕立て伏せ（回）</label>
+                        <input type="number" class="input-field" id="pushups" placeholder="回数を入力">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">腹筋（回）</label>
+                        <input type="number" class="input-field" id="situps" placeholder="回数を入力">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">スクワット（回）</label>
+                        <input type="number" class="input-field" id="squats" placeholder="回数を入力">
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">🫧 マッサージ</span>
+                        <span class="streak-badge" id="massageStreak">0日継続</span>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">マッサージ時間（分）</label>
+                        <input type="number" class="input-field" id="massageTime" placeholder="時間を入力">
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📚 勉強</span>
+                        <span class="streak-badge" id="studyStreak">0日継続</span>
+                    </div>
+                    
+                    <div class="study-item">
+                        <div class="study-item-header">
+                            <label class="study-checkbox" onclick="toggleStudyCheck('english')">
+                                <input type="checkbox" id="english">
+                                <span>🇺🇸 英語</span>
+                            </label>
+                        </div>
+                        <div class="memo-label">📝 メモ・理解したこと</div>
+                        <textarea class="textarea-field" id="englishMemo" placeholder="英語の学習内容や理解したことを記録"></textarea>
+                    </div>
+
+                    <div class="study-item">
+                        <div class="study-item-header">
+                            <label class="study-checkbox" onclick="toggleStudyCheck('bookkeeping')">
+                                <input type="checkbox" id="bookkeeping">
+                                <span>📊 簿記</span>
+                            </label>
+                        </div>
+                        <div class="memo-label">📝 メモ・理解したこと</div>
+                        <textarea class="textarea-field" id="bookkeepingMemo" placeholder="簿記の学習内容や理解したことを記録"></textarea>
+                    </div>
+
+                    <div class="study-item">
+                        <div class="study-item-header">
+                            <label class="study-checkbox" onclick="toggleStudyCheck('fp')">
+                                <input type="checkbox" id="fp">
+                                <span>💰 ファイナンシャルプランナー</span>
+                            </label>
+                        </div>
+                        <div class="memo-label">📝 メモ・理解したこと</div>
+                        <textarea class="textarea-field" id="fpMemo" placeholder="FPの学習内容や理解したことを記録"></textarea>
+                    </div>
+
+                    <div class="study-item">
+                        <div class="study-item-header">
+                            <label class="study-checkbox" onclick="toggleStudyCheck('ai')">
+                                <input type="checkbox" id="ai">
+                                <span>🤖 AI</span>
+                            </label>
+                        </div>
+                        <div class="memo-label">📝 メモ・理解したこと</div>
+                        <textarea class="textarea-field" id="aiMemo" placeholder="AIの学習内容や理解したことを記録"></textarea>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📖 読書</span>
+                        <span class="streak-badge" id="readingStreak">0日継続</span>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">読書時間（分）</label>
+                        <input type="number" class="input-field" id="readingTime" placeholder="時間を入力">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">本のタイトル</label>
+                        <input type="text" class="input-field" id="bookTitle" placeholder="本のタイトル">
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveRecord()">記録を保存</button>
+            </div>
+
+            <!-- 履歴タブ -->
+            <div class="section" id="history">
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalExerciseDays">0</div>
+                        <div class="stat-label">運動日数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalMassageDays">0</div>
+                        <div class="stat-label">マッサージ日数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudyDays">0</div>
+                        <div class="stat-label">勉強日数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalReadingDays">0</div>
+                        <div class="stat-label">読書日数</div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-name">📅 過去7日間の記録</div>
+                    <div class="calendar-grid" id="weeklyCalendar">
+                        <!-- カレンダーがここに生成されます -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 設定タブ -->
+            <div class="section" id="settings">
+                <div class="settings-section">
+                    <div class="settings-title">🔔 リマインド設定</div>
+                    <label class="checkbox-item" onclick="toggleNotification()">
+                        <input type="checkbox" id="notificationEnabled">
+                        <span>通知を有効にする</span>
+                    </label>
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label class="input-label">通知時間</label>
+                        <div class="time-input">
+                            <input type="time" class="input-field" id="notificationTime" value="20:00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">💾 データ管理</div>
+                    <div class="data-controls">
+                        <button class="data-btn export" onclick="exportData()">データをエクスポート</button>
+                        <button class="data-btn import" onclick="importData()">データをインポート</button>
+                        <input type="file" class="file-input" id="importFile" accept=".json" onchange="handleImportFile(event)">
+                        <button class="data-btn clear" onclick="clearAllData()">全データを削除</button>
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveSettings()">設定を保存</button>
+
+                <div class="app-info">
+                    <div class="storage-status">
+                        <div class="status-indicator" id="storageIndicator"></div>
+                        <span id="storageStatus">データ保存: 有効</span>
+                    </div>
+                    <div>ルーティン記録アプリ v2.2</div>
+                    <div>新機能: 各科目個別メモ機能</div>
+                    <div>最終更新: 2025年6月16日</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // アプリのバージョン
+        const APP_VERSION = '2.2';
+        const STORAGE_KEY = 'routineAppData_v2';
+        const SETTINGS_KEY = 'routineAppSettings_v2';
+
+        // データ保存用オブジェクト
+        let appData = {
+            records: {},
+            version: APP_VERSION,
+            lastUpdated: new Date().toISOString()
+        };
+
+        let appSettings = {
+            notificationEnabled: false,
+            notificationTime: '20:00',
+            version: APP_VERSION
+        };
+
+        // localStorageサポートチェック
+        function isLocalStorageSupported() {
+            try {
+                const test = 'test';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+
+        // データを保存
+        function saveDataToStorage() {
+            if (!isLocalStorageSupported()) {
+                console.warn('localStorage is not supported');
+                return false;
+            }
+            
+            try {
+                appData.lastUpdated = new Date().toISOString();
+                appData.version = APP_VERSION;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings));
+                updateStorageStatus(true);
+                return true;
+            } catch(e) {
+                console.error('Failed to save data:', e);
+                updateStorageStatus(false);
+                return false;
+            }
+        }
+
+        // データを読み込み
+        function loadDataFromStorage() {
+            if (!isLocalStorageSupported()) {
+                updateStorageStatus(false);
+                return;
+            }
+
+            try {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                const savedSettings = localStorage.getItem(SETTINGS_KEY);
+                
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    // バージョンチェックとマイグレーション
+                    appData = migrateData(parsed);
+                }
+                
+      
