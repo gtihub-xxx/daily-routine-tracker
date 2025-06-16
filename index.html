@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.2</title>
+    <title>ルーティン記録アプリ v2.3</title>
     <style>
         * {
             margin: 0;
@@ -172,6 +172,7 @@
             cursor: pointer;
             font-weight: bold;
             color: #333;
+            transition: color 0.3s;
         }
 
         .study-checkbox input {
@@ -220,6 +221,12 @@
 
         .save-btn:hover {
             transform: translateY(-2px);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
         }
 
         .settings-section {
@@ -313,6 +320,7 @@
             border-radius: 20px;
             z-index: 1000;
             display: none;
+            transition: all 0.3s;
         }
 
         .data-controls {
@@ -334,6 +342,11 @@
 
         .data-btn:hover {
             background: #5a6268;
+        }
+
+        .data-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .data-btn.export {
@@ -382,20 +395,25 @@
             color: #666;
             margin-bottom: 3px;
         }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="version-badge">v2.2</div>
+            <div class="version-badge">v2.3</div>
             <div class="date" id="currentDate"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('record')">記録</button>
-            <button class="nav-tab" onclick="showTab('history')">履歴</button>
-            <button class="nav-tab" onclick="showTab('settings')">設定</button>
+            <button class="nav-tab active" data-tab="record">記録</button>
+            <button class="nav-tab" data-tab="history">履歴</button>
+            <button class="nav-tab" data-tab="settings">設定</button>
         </div>
 
         <div class="content">
@@ -408,15 +426,15 @@
                     </div>
                     <div class="input-group">
                         <label class="input-label">腕立て伏せ（回）</label>
-                        <input type="number" class="input-field" id="pushups" placeholder="回数を入力">
+                        <input type="number" class="input-field" id="pushups" placeholder="回数を入力" min="0" max="9999">
                     </div>
                     <div class="input-group">
                         <label class="input-label">腹筋（回）</label>
-                        <input type="number" class="input-field" id="situps" placeholder="回数を入力">
+                        <input type="number" class="input-field" id="situps" placeholder="回数を入力" min="0" max="9999">
                     </div>
                     <div class="input-group">
                         <label class="input-label">スクワット（回）</label>
-                        <input type="number" class="input-field" id="squats" placeholder="回数を入力">
+                        <input type="number" class="input-field" id="squats" placeholder="回数を入力" min="0" max="9999">
                     </div>
                 </div>
 
@@ -427,7 +445,7 @@
                     </div>
                     <div class="input-group">
                         <label class="input-label">マッサージ時間（分）</label>
-                        <input type="number" class="input-field" id="massageTime" placeholder="時間を入力">
+                        <input type="number" class="input-field" id="massageTime" placeholder="時間を入力" min="0" max="999">
                     </div>
                 </div>
 
@@ -439,46 +457,46 @@
                     
                     <div class="study-item">
                         <div class="study-item-header">
-                            <label class="study-checkbox" onclick="toggleStudyCheck('english')">
+                            <label class="study-checkbox" data-subject="english">
                                 <input type="checkbox" id="english">
                                 <span>🇺🇸 英語</span>
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="englishMemo" placeholder="英語の学習内容や理解したことを記録"></textarea>
+                        <textarea class="textarea-field" id="englishMemo" placeholder="英語の学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
                         <div class="study-item-header">
-                            <label class="study-checkbox" onclick="toggleStudyCheck('bookkeeping')">
+                            <label class="study-checkbox" data-subject="bookkeeping">
                                 <input type="checkbox" id="bookkeeping">
                                 <span>📊 簿記</span>
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="bookkeepingMemo" placeholder="簿記の学習内容や理解したことを記録"></textarea>
+                        <textarea class="textarea-field" id="bookkeepingMemo" placeholder="簿記の学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
                         <div class="study-item-header">
-                            <label class="study-checkbox" onclick="toggleStudyCheck('fp')">
+                            <label class="study-checkbox" data-subject="fp">
                                 <input type="checkbox" id="fp">
                                 <span>💰 ファイナンシャルプランナー</span>
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="fpMemo" placeholder="FPの学習内容や理解したことを記録"></textarea>
+                        <textarea class="textarea-field" id="fpMemo" placeholder="FPの学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
                         <div class="study-item-header">
-                            <label class="study-checkbox" onclick="toggleStudyCheck('ai')">
+                            <label class="study-checkbox" data-subject="ai">
                                 <input type="checkbox" id="ai">
                                 <span>🤖 AI</span>
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="aiMemo" placeholder="AIの学習内容や理解したことを記録"></textarea>
+                        <textarea class="textarea-field" id="aiMemo" placeholder="AIの学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
                 </div>
 
@@ -489,15 +507,15 @@
                     </div>
                     <div class="input-group">
                         <label class="input-label">読書時間（分）</label>
-                        <input type="number" class="input-field" id="readingTime" placeholder="時間を入力">
+                        <input type="number" class="input-field" id="readingTime" placeholder="時間を入力" min="0" max="999">
                     </div>
                     <div class="input-group">
                         <label class="input-label">本のタイトル</label>
-                        <input type="text" class="input-field" id="bookTitle" placeholder="本のタイトル">
+                        <input type="text" class="input-field" id="bookTitle" placeholder="本のタイトル" maxlength="100">
                     </div>
                 </div>
 
-                <button class="save-btn" onclick="saveRecord()">記録を保存</button>
+                <button class="save-btn" id="saveRecordBtn">記録を保存</button>
             </div>
 
             <!-- 履歴タブ -->
@@ -533,7 +551,7 @@
             <div class="section" id="settings">
                 <div class="settings-section">
                     <div class="settings-title">🔔 リマインド設定</div>
-                    <label class="checkbox-item" onclick="toggleNotification()">
+                    <label class="checkbox-item" data-toggle="notification">
                         <input type="checkbox" id="notificationEnabled">
                         <span>通知を有効にする</span>
                     </label>
@@ -548,22 +566,22 @@
                 <div class="settings-section">
                     <div class="settings-title">💾 データ管理</div>
                     <div class="data-controls">
-                        <button class="data-btn export" onclick="exportData()">データをエクスポート</button>
-                        <button class="data-btn import" onclick="importData()">データをインポート</button>
-                        <input type="file" class="file-input" id="importFile" accept=".json" onchange="handleImportFile(event)">
-                        <button class="data-btn clear" onclick="clearAllData()">全データを削除</button>
+                        <button class="data-btn export" id="exportBtn">データをエクスポート</button>
+                        <button class="data-btn import" id="importBtn">データをインポート</button>
+                        <input type="file" class="file-input" id="importFile" accept=".json">
+                        <button class="data-btn clear" id="clearBtn">全データを削除</button>
                     </div>
                 </div>
 
-                <button class="save-btn" onclick="saveSettings()">設定を保存</button>
+                <button class="save-btn" id="saveSettingsBtn">設定を保存</button>
 
                 <div class="app-info">
                     <div class="storage-status">
                         <div class="status-indicator" id="storageIndicator"></div>
                         <span id="storageStatus">データ保存: 有効</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.2</div>
-                    <div>新機能: 各科目個別メモ機能</div>
+                    <div>ルーティン記録アプリ v2.3</div>
+                    <div>改善: リファクタリング & バグ修正</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
             </div>
@@ -573,72 +591,58 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // アプリのバージョン
-        const APP_VERSION = '2.2';
-        const STORAGE_KEY = 'routineAppData_v2';
-        const SETTINGS_KEY = 'routineAppSettings_v2';
+        'use strict';
 
-        // データ保存用オブジェクト
-        let appData = {
-            records: {},
-            version: APP_VERSION,
-            lastUpdated: new Date().toISOString()
+        // ====================
+        // アプリケーション設定
+        // ====================
+        const APP = {
+            VERSION: '2.3',
+            STORAGE_KEY: 'routineAppData_v2',
+            SETTINGS_KEY: 'routineAppSettings_v2',
+            SUBJECTS: ['english', 'bookkeeping', 'fp', 'ai'],
+            CATEGORIES: ['exercise', 'massage', 'study', 'reading']
         };
 
-        let appSettings = {
-            notificationEnabled: false,
-            notificationTime: '20:00',
-            version: APP_VERSION
-        };
-
-        // localStorageサポートチェック
-        function isLocalStorageSupported() {
-            try {
-                const test = 'test';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch(e) {
-                return false;
-            }
-        }
-
-        // データを保存
-        function saveDataToStorage() {
-            if (!isLocalStorageSupported()) {
-                console.warn('localStorage is not supported');
-                return false;
-            }
-            
-            try {
-                appData.lastUpdated = new Date().toISOString();
-                appData.version = APP_VERSION;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-                localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings));
-                updateStorageStatus(true);
-                return true;
-            } catch(e) {
-                console.error('Failed to save data:', e);
-                updateStorageStatus(false);
-                return false;
-            }
-        }
-
-        // データを読み込み
-        function loadDataFromStorage() {
-            if (!isLocalStorageSupported()) {
-                updateStorageStatus(false);
-                return;
-            }
-
-            try {
-                const savedData = localStorage.getItem(STORAGE_KEY);
-                const savedSettings = localStorage.getItem(SETTINGS_KEY);
+        // ====================
+        // データ管理クラス
+        // ====================
+        class DataManager {
+            constructor() {
+                this.appData = {
+                    records: {},
+                    version: APP.VERSION,
+                    lastUpdated: new Date().toISOString()
+                };
                 
-                if (savedData) {
-                    const parsed = JSON.parse(savedData);
-                    // バージョンチェックとマイグレーション
-                    appData = migrateData(parsed);
+                this.appSettings = {
+                    notificationEnabled: false,
+                    notificationTime: '20:00',
+                    version: APP.VERSION
+                };
+                
+                this.notificationTimer = null;
+            }
+
+            // localStorageサポートチェック
+            isLocalStorageSupported() {
+                try {
+                    const test = 'test';
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    return true;
+                } catch(e) {
+                    return false;
+                }
+            }
+
+            // データを保存
+            saveToStorage() {
+                if (!this.isLocalStorageSupported()) {
+                    console.warn('localStorage is not supported');
+                    return false;
                 }
                 
-      
+                try {
+                    this.appData.lastUpdated = new Date().toISOString();
+                    this.appData.version = APP.V
