@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.5.0</title>
+    <title>ルーティン記録アプリ v2.5.2</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -457,6 +457,21 @@
             align-items: center;
         }
 
+        .notification-times {
+            padding: 10px;
+            background: var(--background-light);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .notification-times .input-group {
+            margin-bottom: 15px;
+        }
+
+        .notification-times .input-group:last-child {
+            margin-bottom: 0;
+        }
+
         .file-input {
             display: none;
         }
@@ -522,7 +537,7 @@
 <body>
     <div class="container" id="app-container">
         <div class="header">
-            <div class="version-badge">v2.5.0</div>
+            <div class="version-badge">v2.5.2</div>
             <div class="date" id="current-date"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
@@ -709,10 +724,20 @@
                         <input type="checkbox" id="notification-enabled">
                         <span>通知を有効にする</span>
                     </label>
-                    <div class="input-group" style="margin-top: 15px;">
-                        <label class="input-label" for="notification-time">通知時間</label>
-                        <div class="time-input">
-                            <input type="time" class="input-field" id="notification-time" value="20:00">
+                    
+                    <div class="notification-times">
+                        <div class="input-group" style="margin-top: 15px;">
+                            <label class="input-label" for="notification-time-1">🌅 リマインド時間 1（朝・昼）</label>
+                            <div class="time-input">
+                                <input type="time" class="input-field" id="notification-time-1" value="12:00">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label" for="notification-time-2">🌙 リマインド時間 2（夜）</label>
+                            <div class="time-input">
+                                <input type="time" class="input-field" id="notification-time-2" value="20:00">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -734,8 +759,8 @@
                         <div class="status-indicator" id="storage-indicator"></div>
                         <span id="storage-status">データ保存: 確認中...</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.5.0</div>
-                    <div>新機能: 項目別記録ボタン追加</div>
+                    <div>ルーティン記録アプリ v2.5.2</div>
+                    <div>新機能: リマインド2回設定</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
             </section>
@@ -751,7 +776,7 @@
         // 定数定義
         // ===============================
         const CONFIG = {
-            VERSION: '2.5.0',
+            VERSION: '2.5.2',
             STORAGE_KEY: 'routineAppData_v2',
             SETTINGS_KEY: 'routineAppSettings_v2',
             
@@ -766,7 +791,8 @@
             },
             
             DEFAULTS: {
-                NOTIFICATION_TIME: '20:00',
+                NOTIFICATION_TIME_1: '12:00',
+                NOTIFICATION_TIME_2: '20:00',
                 NOTIFICATION_ENABLED: false
             }
         };
@@ -903,7 +929,8 @@
 
                 this.settings = {
                     notificationEnabled: CONFIG.DEFAULTS.NOTIFICATION_ENABLED,
-                    notificationTime: CONFIG.DEFAULTS.NOTIFICATION_TIME,
+                    notificationTime1: CONFIG.DEFAULTS.NOTIFICATION_TIME_1,
+                    notificationTime2: CONFIG.DEFAULTS.NOTIFICATION_TIME_2,
                     version: CONFIG.VERSION
                 };
             }
@@ -918,6 +945,14 @@
 
                 if (savedSettings) {
                     this.settings = { ...this.settings, ...savedSettings };
+                    
+                    // 古いデータ形式からの移行処理
+                    if (savedSettings.notificationTime && !savedSettings.notificationTime1) {
+                        this.settings.notificationTime1 = CONFIG.DEFAULTS.NOTIFICATION_TIME_1;
+                        this.settings.notificationTime2 = savedSettings.notificationTime;
+                        delete this.settings.notificationTime;
+                    }
+                    
                     this.settings.version = CONFIG.VERSION;
                 }
 
@@ -1230,9 +1265,14 @@
             }
 
             loadSettings(settings) {
-                const notificationTime = document.getElementById('notification-time');
-                if (notificationTime) {
-                    notificationTime.value = settings.notificationTime;
+                const notificationTime1 = document.getElementById('notification-time-1');
+                const notificationTime2 = document.getElementById('notification-time-2');
+                
+                if (notificationTime1) {
+                    notificationTime1.value = settings.notificationTime1 || CONFIG.DEFAULTS.NOTIFICATION_TIME_1;
+                }
+                if (notificationTime2) {
+                    notificationTime2.value = settings.notificationTime2 || CONFIG.DEFAULTS.NOTIFICATION_TIME_2;
                 }
                 
                 // 通知チェックボックスの状態を設定
@@ -1357,7 +1397,7 @@
         // ===============================
         class NotificationManager {
             constructor() {
-                this.timer = null;
+                this.timers = [];
             }
 
             async requestPermission() {
@@ -1377,10 +1417,16 @@
                 if (!settings.notificationEnabled || !('Notification' in window)) return;
                 if (Notification.permission !== 'granted') return;
 
-                this.schedule(settings.notificationTime);
+                // 2つの通知をスケジュール
+                if (settings.notificationTime1) {
+                    this.schedule(settings.notificationTime1, '🌅 朝のリマインド');
+                }
+                if (settings.notificationTime2) {
+                    this.schedule(settings.notificationTime2, '🌙 夜のリマインド');
+                }
             }
 
-            schedule(timeString) {
+            schedule(timeString, label) {
                 const [hours, minutes] = timeString.split(':').map(Number);
                 const now = new Date();
                 const notificationTime = new Date();
@@ -1392,27 +1438,27 @@
 
                 const delay = notificationTime.getTime() - now.getTime();
 
-                this.timer = setTimeout(() => {
-                    this.show();
-                    this.schedule(timeString); // 24時間後に再スケジュール
+                const timer = setTimeout(() => {
+                    this.show(label);
+                    this.schedule(timeString, label); // 24時間後に再スケジュール
                 }, delay);
+
+                this.timers.push(timer);
             }
 
-            show() {
+            show(label = '') {
                 if (Notification.permission === 'granted') {
-                    new Notification('ルーティン記録アプリ v2.5.0', {
-                        body: '今日のルーティンを記録しましょう！',
+                    new Notification('ルーティン記録アプリ v2.5.2', {
+                        body: `${label}\n今日のルーティンを記録しましょう！`,
                         icon: '📝',
-                        tag: 'routine-reminder'
+                        tag: `routine-reminder-${Date.now()}`
                     });
                 }
             }
 
             clear() {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
+                this.timers.forEach(timer => clearTimeout(timer));
+                this.timers = [];
             }
         }
 
@@ -1661,7 +1707,8 @@
                     this.ui.setLoading(true);
 
                     this.dataManager.settings.notificationEnabled = document.getElementById('notification-enabled')?.checked || false;
-                    this.dataManager.settings.notificationTime = document.getElementById('notification-time')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME;
+                    this.dataManager.settings.notificationTime1 = document.getElementById('notification-time-1')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME_1;
+                    this.dataManager.settings.notificationTime2 = document.getElementById('notification-time-2')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME_2;
                     this.dataManager.settings.version = CONFIG.VERSION;
 
                     if (this.dataManager.save()) {
