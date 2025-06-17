@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.3</title>
+    <title>ルーティン記録アプリ v2.4</title>
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff6b6b;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-light: #ddd;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --border-radius: 8px;
+            --border-radius-large: 15px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,23 +30,24 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--background-gradient);
             min-height: 100vh;
             padding: 10px;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 400px;
             margin: 0 auto;
-            background: white;
+            background: var(--background-white);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: var(--primary-gradient);
+            color: var(--background-white);
             padding: 20px;
             text-align: center;
             position: relative;
@@ -57,9 +75,10 @@
             opacity: 0.9;
         }
 
+        /* Navigation */
         .nav-tabs {
             display: flex;
-            background: #f8f9fa;
+            background: var(--background-light);
         }
 
         .nav-tab {
@@ -70,15 +89,17 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.3s;
+            transition: var(--transition);
+            color: var(--text-secondary);
         }
 
         .nav-tab.active {
-            background: white;
+            background: var(--background-white);
             color: #4facfe;
             font-weight: bold;
         }
 
+        /* Content */
         .content {
             padding: 20px;
         }
@@ -91,10 +112,11 @@
             display: block;
         }
 
+        /* Routine Sections */
         .routine-section {
             margin-bottom: 25px;
-            background: #f8f9fa;
-            border-radius: 15px;
+            background: var(--background-light);
+            border-radius: var(--border-radius-large);
             padding: 20px;
             position: relative;
         }
@@ -109,18 +131,19 @@
         .section-name {
             font-size: 18px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .streak-badge {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: white;
+            background: linear-gradient(135deg, var(--warning-color), #feca57);
+            color: var(--background-white);
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
         }
 
+        /* Form Elements */
         .input-group {
             margin-bottom: 15px;
         }
@@ -128,42 +151,49 @@
         .input-label {
             display: block;
             margin-bottom: 5px;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
         }
 
         .input-field {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
             font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4facfe;
         }
 
         .textarea-field {
             width: 100%;
             padding: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-light);
             border-radius: 6px;
             font-size: 12px;
             min-height: 60px;
             resize: vertical;
             font-family: inherit;
             margin-top: 8px;
+            transition: border-color 0.3s;
         }
 
+        .textarea-field:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        /* Study Items */
         .study-item {
             margin-bottom: 20px;
-            background: white;
+            background: var(--background-white);
             border-radius: 10px;
             padding: 15px;
             border: 1px solid #e0e0e0;
-        }
-
-        .study-item-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
         }
 
         .study-checkbox {
@@ -171,81 +201,93 @@
             align-items: center;
             cursor: pointer;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
             transition: color 0.3s;
         }
 
         .study-checkbox input {
             margin-right: 8px;
+            transform: scale(1.2);
         }
 
         .study-checkbox.checked {
-            color: #4caf50;
+            color: var(--success-color);
         }
 
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-gradient);
+            color: var(--background-white);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #6c757d;
+            color: var(--background-white);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-export { background: #28a745; }
+        .btn-import { background: #007bff; }
+        .btn-clear { background: var(--error-color); }
+
+        /* Checkbox Items */
         .checkbox-item {
             display: flex;
             align-items: center;
-            background: white;
+            background: var(--background-white);
             padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             flex: 1;
             min-width: 120px;
         }
 
         .checkbox-item.checked {
             background: #e8f5e8;
-            border-color: #4caf50;
+            border-color: var(--success-color);
         }
 
         .checkbox-item input {
             margin-right: 8px;
         }
 
-        .save-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-
-        .save-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .save-btn:disabled {
-            opacity: 0.6;
-            transform: none;
-            cursor: not-allowed;
-        }
-
-        .settings-section {
-            margin-bottom: 20px;
-        }
-
-        .settings-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .time-input {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        /* Calendar */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -258,14 +300,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             font-size: 12px;
             font-weight: bold;
         }
 
         .calendar-header {
             background: #667eea;
-            color: white;
+            color: var(--background-white);
         }
 
         .calendar-date {
@@ -274,15 +316,16 @@
         }
 
         .calendar-date.completed {
-            background: #4caf50;
-            color: white;
+            background: var(--success-color);
+            color: var(--background-white);
         }
 
         .calendar-date.today {
             background: #2196f3;
-            color: white;
+            color: var(--background-white);
         }
 
+        /* Statistics */
         .summary-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -291,7 +334,7 @@
         }
 
         .stat-card {
-            background: #f8f9fa;
+            background: var(--background-light);
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -305,60 +348,45 @@
 
         .stat-label {
             font-size: 12px;
-            color: #666;
+            color: var(--text-secondary);
             margin-top: 5px;
         }
 
+        /* Toast */
         .toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #4caf50;
-            color: white;
+            background: var(--success-color);
+            color: var(--background-white);
             padding: 10px 20px;
             border-radius: 20px;
             z-index: 1000;
             display: none;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
-        .data-controls {
+        .toast.error {
+            background: var(--error-color);
+        }
+
+        /* Settings */
+        .settings-section {
             margin-bottom: 20px;
         }
 
-        .data-btn {
-            width: 100%;
-            padding: 12px;
+        .settings-title {
+            font-size: 16px;
+            font-weight: bold;
             margin-bottom: 10px;
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.3s;
+            color: var(--text-primary);
         }
 
-        .data-btn:hover {
-            background: #5a6268;
-        }
-
-        .data-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .data-btn.export {
-            background: #28a745;
-        }
-
-        .data-btn.import {
-            background: #007bff;
-        }
-
-        .data-btn.clear {
-            background: #dc3545;
+        .time-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .file-input {
@@ -367,11 +395,11 @@
 
         .app-info {
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 12px;
             margin-top: 20px;
             padding: 15px;
-            background: #f8f9fa;
+            background: var(--background-light);
             border-radius: 10px;
         }
 
@@ -387,53 +415,74 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #4caf50;
+            background: var(--success-color);
+        }
+
+        .status-indicator.error {
+            background: var(--error-color);
         }
 
         .memo-label {
             font-size: 12px;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 3px;
         }
 
+        /* Loading State */
         .loading {
             opacity: 0.6;
             pointer-events: none;
         }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .routine-section {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="app-container">
         <div class="header">
-            <div class="version-badge">v2.3</div>
-            <div class="date" id="currentDate"></div>
+            <div class="version-badge">v2.4</div>
+            <div class="date" id="current-date"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
 
-        <div class="nav-tabs">
+        <nav class="nav-tabs">
             <button class="nav-tab active" data-tab="record">記録</button>
             <button class="nav-tab" data-tab="history">履歴</button>
             <button class="nav-tab" data-tab="settings">設定</button>
-        </div>
+        </nav>
 
         <div class="content">
             <!-- 記録タブ -->
-            <div class="section active" id="record">
+            <section class="section active" id="record">
                 <div class="routine-section">
                     <div class="section-title">
                         <span class="section-name">💪 運動</span>
-                        <span class="streak-badge" id="exerciseStreak">0日継続</span>
+                        <span class="streak-badge" id="exercise-streak">0日継続</span>
                     </div>
                     <div class="input-group">
-                        <label class="input-label">腕立て伏せ（回）</label>
+                        <label class="input-label" for="pushups">腕立て伏せ（回）</label>
                         <input type="number" class="input-field" id="pushups" placeholder="回数を入力" min="0" max="9999">
                     </div>
                     <div class="input-group">
-                        <label class="input-label">腹筋（回）</label>
+                        <label class="input-label" for="situps">腹筋（回）</label>
                         <input type="number" class="input-field" id="situps" placeholder="回数を入力" min="0" max="9999">
                     </div>
                     <div class="input-group">
-                        <label class="input-label">スクワット（回）</label>
+                        <label class="input-label" for="squats">スクワット（回）</label>
                         <input type="number" class="input-field" id="squats" placeholder="回数を入力" min="0" max="9999">
                     </div>
                 </div>
@@ -441,18 +490,18 @@
                 <div class="routine-section">
                     <div class="section-title">
                         <span class="section-name">🫧 マッサージ</span>
-                        <span class="streak-badge" id="massageStreak">0日継続</span>
+                        <span class="streak-badge" id="massage-streak">0日継続</span>
                     </div>
                     <div class="input-group">
-                        <label class="input-label">マッサージ時間（分）</label>
-                        <input type="number" class="input-field" id="massageTime" placeholder="時間を入力" min="0" max="999">
+                        <label class="input-label" for="massage-time">マッサージ時間（分）</label>
+                        <input type="number" class="input-field" id="massage-time" placeholder="時間を入力" min="0" max="999">
                     </div>
                 </div>
 
                 <div class="routine-section">
                     <div class="section-title">
                         <span class="section-name">📚 勉強</span>
-                        <span class="streak-badge" id="studyStreak">0日継続</span>
+                        <span class="streak-badge" id="study-streak">0日継続</span>
                     </div>
                     
                     <div class="study-item">
@@ -463,7 +512,7 @@
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="englishMemo" placeholder="英語の学習内容や理解したことを記録" maxlength="1000"></textarea>
+                        <textarea class="textarea-field" id="english-memo" placeholder="英語の学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
@@ -474,7 +523,7 @@
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="bookkeepingMemo" placeholder="簿記の学習内容や理解したことを記録" maxlength="1000"></textarea>
+                        <textarea class="textarea-field" id="bookkeeping-memo" placeholder="簿記の学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
@@ -485,7 +534,7 @@
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="fpMemo" placeholder="FPの学習内容や理解したことを記録" maxlength="1000"></textarea>
+                        <textarea class="textarea-field" id="fp-memo" placeholder="FPの学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
 
                     <div class="study-item">
@@ -496,69 +545,67 @@
                             </label>
                         </div>
                         <div class="memo-label">📝 メモ・理解したこと</div>
-                        <textarea class="textarea-field" id="aiMemo" placeholder="AIの学習内容や理解したことを記録" maxlength="1000"></textarea>
+                        <textarea class="textarea-field" id="ai-memo" placeholder="AIの学習内容や理解したことを記録" maxlength="1000"></textarea>
                     </div>
                 </div>
 
                 <div class="routine-section">
                     <div class="section-title">
                         <span class="section-name">📖 読書</span>
-                        <span class="streak-badge" id="readingStreak">0日継続</span>
+                        <span class="streak-badge" id="reading-streak">0日継続</span>
                     </div>
                     <div class="input-group">
-                        <label class="input-label">読書時間（分）</label>
-                        <input type="number" class="input-field" id="readingTime" placeholder="時間を入力" min="0" max="999">
+                        <label class="input-label" for="reading-time">読書時間（分）</label>
+                        <input type="number" class="input-field" id="reading-time" placeholder="時間を入力" min="0" max="999">
                     </div>
                     <div class="input-group">
-                        <label class="input-label">本のタイトル</label>
-                        <input type="text" class="input-field" id="bookTitle" placeholder="本のタイトル" maxlength="100">
+                        <label class="input-label" for="book-title">本のタイトル</label>
+                        <input type="text" class="input-field" id="book-title" placeholder="本のタイトル" maxlength="100">
                     </div>
                 </div>
 
-                <button class="save-btn" id="saveRecordBtn">記録を保存</button>
-            </div>
+                <button class="btn-primary" id="save-record-btn">記録を保存</button>
+            </section>
 
             <!-- 履歴タブ -->
-            <div class="section" id="history">
+            <section class="section" id="history">
                 <div class="summary-stats">
                     <div class="stat-card">
-                        <div class="stat-number" id="totalExerciseDays">0</div>
+                        <div class="stat-number" id="total-exercise-days">0</div>
                         <div class="stat-label">運動日数</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="totalMassageDays">0</div>
+                        <div class="stat-number" id="total-massage-days">0</div>
                         <div class="stat-label">マッサージ日数</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="totalStudyDays">0</div>
+                        <div class="stat-number" id="total-study-days">0</div>
                         <div class="stat-label">勉強日数</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="totalReadingDays">0</div>
+                        <div class="stat-number" id="total-reading-days">0</div>
                         <div class="stat-label">読書日数</div>
                     </div>
                 </div>
 
                 <div class="routine-section">
                     <div class="section-name">📅 過去7日間の記録</div>
-                    <div class="calendar-grid" id="weeklyCalendar">
-                        <!-- カレンダーがここに生成されます -->
-                    </div>
+                    <div class="calendar-grid" id="weekly-calendar"></div>
                 </div>
-            </div>
+            </section>
 
             <!-- 設定タブ -->
-            <div class="section" id="settings">
+            <section class="section" id="settings">
                 <div class="settings-section">
                     <div class="settings-title">🔔 リマインド設定</div>
                     <label class="checkbox-item" data-toggle="notification">
-                        <input type="checkbox" id="notificationEnabled">
+                        <input type="checkbox" id="notification-enabled">
                         <span>通知を有効にする</span>
                     </label>
                     <div class="input-group" style="margin-top: 15px;">
-                        <label class="input-label">通知時間</label>
+                        <label class="input-label" for="notification-time">通知時間</label>
                         <div class="time-input">
-                            <input type="time" class="input-field" id="notificationTime" value="20:00">
+                            <input type="time" class="input-field" id="notification-time" value="20:00">
                         </div>
                     </div>
                 </div>
@@ -566,25 +613,25 @@
                 <div class="settings-section">
                     <div class="settings-title">💾 データ管理</div>
                     <div class="data-controls">
-                        <button class="data-btn export" id="exportBtn">データをエクスポート</button>
-                        <button class="data-btn import" id="importBtn">データをインポート</button>
-                        <input type="file" class="file-input" id="importFile" accept=".json">
-                        <button class="data-btn clear" id="clearBtn">全データを削除</button>
+                        <button class="btn-secondary btn-export" id="export-btn">データをエクスポート</button>
+                        <button class="btn-secondary btn-import" id="import-btn">データをインポート</button>
+                        <input type="file" class="file-input" id="import-file" accept=".json">
+                        <button class="btn-secondary btn-clear" id="clear-btn">全データを削除</button>
                     </div>
                 </div>
 
-                <button class="save-btn" id="saveSettingsBtn">設定を保存</button>
+                <button class="btn-primary" id="save-settings-btn">設定を保存</button>
 
                 <div class="app-info">
                     <div class="storage-status">
-                        <div class="status-indicator" id="storageIndicator"></div>
-                        <span id="storageStatus">データ保存: 有効</span>
+                        <div class="status-indicator" id="storage-indicator"></div>
+                        <span id="storage-status">データ保存: 確認中...</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.3</div>
-                    <div>改善: リファクタリング & バグ修正</div>
+                    <div>ルーティン記録アプリ v2.4</div>
+                    <div>改善: 完全リファクタリング版</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 
@@ -593,182 +640,236 @@
     <script>
         'use strict';
 
-        // ====================
-        // アプリケーション設定
-        // ====================
-        const APP = {
-            VERSION: '2.3',
+        // ===============================
+        // 定数定義
+        // ===============================
+        const CONFIG = {
+            VERSION: '2.4',
             STORAGE_KEY: 'routineAppData_v2',
             SETTINGS_KEY: 'routineAppSettings_v2',
+            
             SUBJECTS: ['english', 'bookkeeping', 'fp', 'ai'],
-            CATEGORIES: ['exercise', 'massage', 'study', 'reading']
+            CATEGORIES: ['exercise', 'massage', 'study', 'reading'],
+            
+            LIMITS: {
+                EXERCISE_MAX: 9999,
+                TIME_MAX: 999,
+                TEXT_MAX: 100,
+                MEMO_MAX: 1000
+            },
+            
+            DEFAULTS: {
+                NOTIFICATION_TIME: '20:00',
+                NOTIFICATION_ENABLED: false
+            }
         };
 
-        // ====================
-        // データ管理クラス
-        // ====================
-        class DataManager {
-            constructor() {
-                this.appData = {
-                    records: {},
-                    version: APP.VERSION,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                this.appSettings = {
-                    notificationEnabled: false,
-                    notificationTime: '20:00',
-                    version: APP.VERSION
-                };
-                
-                this.notificationTimer = null;
-            }
+        const SELECTORS = {
+            CONTAINER: '#app-container',
+            CURRENT_DATE: '#current-date',
+            SAVE_RECORD: '#save-record-btn',
+            SAVE_SETTINGS: '#save-settings-btn',
+            EXPORT: '#export-btn',
+            IMPORT: '#import-btn',
+            CLEAR: '#clear-btn',
+            IMPORT_FILE: '#import-file',
+            TOAST: '#toast',
+            STORAGE_INDICATOR: '#storage-indicator',
+            STORAGE_STATUS: '#storage-status'
+        };
 
-            // localStorageサポートチェック
-            isLocalStorageSupported() {
+        // ===============================
+        // ユーティリティ関数
+        // ===============================
+        const Utils = {
+            formatDate(date) {
+                return date.toISOString().split('T')[0];
+            },
+
+            getToday() {
+                return this.formatDate(new Date());
+            },
+
+            getDateString(date) {
+                const days = ['日', '月', '火', '水', '木', '金', '土'];
+                return `${date.getMonth() + 1}月${date.getDate()}日（${days[date.getDay()]}）`;
+            },
+
+            validateNumber(value, min = 0, max = Infinity) {
+                const num = parseInt(value) || 0;
+                return Math.max(min, Math.min(max, num));
+            },
+
+            validateText(value, maxLength = Infinity) {
+                return String(value || '').trim().substring(0, maxLength);
+            },
+
+            downloadFile(data, filename, type = 'application/json') {
+                const blob = new Blob([data], { type });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            },
+
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        };
+
+        // ===============================
+        // ストレージ管理
+        // ===============================
+        const Storage = {
+            isSupported() {
                 try {
                     const test = 'test';
                     localStorage.setItem(test, test);
                     localStorage.removeItem(test);
                     return true;
-                } catch(e) {
+                } catch {
                     return false;
                 }
-            }
+            },
 
-            // データを保存
-            saveToStorage() {
-                if (!this.isLocalStorageSupported()) {
-                    console.warn('localStorage is not supported');
-                    return false;
-                }
-                
+            save(key, data) {
+                if (!this.isSupported()) return false;
                 try {
-                    this.appData.lastUpdated = new Date().toISOString();
-                    this.appData.version = APP.VERSION;
-                    localStorage.setItem(APP.STORAGE_KEY, JSON.stringify(this.appData));
-                    localStorage.setItem(APP.SETTINGS_KEY, JSON.stringify(this.appSettings));
-                    UI.updateStorageStatus(true);
+                    localStorage.setItem(key, JSON.stringify(data));
                     return true;
-                } catch(e) {
-                    console.error('Failed to save data:', e);
-                    UI.updateStorageStatus(false);
+                } catch {
+                    return false;
+                }
+            },
+
+            load(key) {
+                if (!this.isSupported()) return null;
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch {
+                    return null;
+                }
+            },
+
+            remove(key) {
+                if (!this.isSupported()) return false;
+                try {
+                    localStorage.removeItem(key);
+                    return true;
+                } catch {
                     return false;
                 }
             }
+        };
 
-            // データを読み込み
-            loadFromStorage() {
-                if (!this.isLocalStorageSupported()) {
-                    UI.updateStorageStatus(false);
-                    return;
-                }
-
-                try {
-                    const savedData = localStorage.getItem(APP.STORAGE_KEY);
-                    const savedSettings = localStorage.getItem(APP.SETTINGS_KEY);
-                    
-                    if (savedData) {
-                        const parsed = JSON.parse(savedData);
-                        this.appData = this.migrateData(parsed);
-                    }
-                    
-                    if (savedSettings) {
-                        const parsedSettings = JSON.parse(savedSettings);
-                        this.appSettings = {...this.appSettings, ...parsedSettings};
-                        this.appSettings.version = APP.VERSION;
-                    }
-                    
-                    UI.updateStorageStatus(true);
-                } catch(e) {
-                    console.error('Failed to load data:', e);
-                    UI.updateStorageStatus(false);
-                }
+        // ===============================
+        // データ管理
+        // ===============================
+        class DataManager {
+            constructor() {
+                this.reset();
             }
 
-            // データマイグレーション
-            migrateData(oldData) {
-                console.log('Migrating data to v2.3...');
+            reset() {
+                this.data = {
+                    records: {},
+                    version: CONFIG.VERSION,
+                    lastUpdated: new Date().toISOString()
+                };
+
+                this.settings = {
+                    notificationEnabled: CONFIG.DEFAULTS.NOTIFICATION_ENABLED,
+                    notificationTime: CONFIG.DEFAULTS.NOTIFICATION_TIME,
+                    version: CONFIG.VERSION
+                };
+            }
+
+            load() {
+                const savedData = Storage.load(CONFIG.STORAGE_KEY);
+                const savedSettings = Storage.load(CONFIG.SETTINGS_KEY);
+
+                if (savedData) {
+                    this.data = this.migrateData(savedData);
+                }
+
+                if (savedSettings) {
+                    this.settings = { ...this.settings, ...savedSettings };
+                    this.settings.version = CONFIG.VERSION;
+                }
+
+                return Storage.isSupported();
+            }
+
+            save() {
+                this.data.lastUpdated = new Date().toISOString();
+                this.data.version = CONFIG.VERSION;
                 
+                const dataSuccess = Storage.save(CONFIG.STORAGE_KEY, this.data);
+                const settingsSuccess = Storage.save(CONFIG.SETTINGS_KEY, this.settings);
+                
+                return dataSuccess && settingsSuccess;
+            }
+
+            migrateData(oldData) {
+                if (oldData.version === CONFIG.VERSION) return oldData;
+
                 const newData = {
                     records: {},
-                    version: APP.VERSION,
+                    version: CONFIG.VERSION,
                     lastUpdated: new Date().toISOString()
                 };
 
                 if (oldData.records) {
-                    Object.entries(oldData.records).forEach(([date, oldRecord]) => {
-                        newData.records[date] = this.migrateRecord(oldRecord, date);
+                    Object.entries(oldData.records).forEach(([date, record]) => {
+                        newData.records[date] = this.migrateRecord(record, date);
                     });
                 }
 
                 return newData;
             }
 
-            // 個別レコードのマイグレーション
-            migrateRecord(oldRecord, date) {
+            migrateRecord(record, date) {
                 return {
-                    date: date,
-                    exercise: this.migrateExercise(oldRecord.exercise),
-                    massage: this.migrateMassage(oldRecord.massage),
-                    study: this.migrateStudy(oldRecord.study),
-                    reading: this.migrateReading(oldRecord.reading)
+                    date,
+                    exercise: record.exercise || { completed: false, pushups: 0, situps: 0, squats: 0 },
+                    massage: record.massage || { completed: false, time: 0 },
+                    study: {
+                        completed: record.study?.completed || false,
+                        english: record.study?.english || false,
+                        bookkeeping: record.study?.bookkeeping || false,
+                        fp: record.study?.fp || false,
+                        ai: record.study?.ai || false,
+                        englishMemo: record.study?.englishMemo || record.study?.memo || '',
+                        bookkeepingMemo: record.study?.bookkeepingMemo || '',
+                        fpMemo: record.study?.fpMemo || '',
+                        aiMemo: record.study?.aiMemo || ''
+                    },
+                    reading: record.reading || { completed: false, time: 0, title: '' }
                 };
             }
 
-            migrateExercise(exercise) {
-                return exercise || {
-                    completed: false,
-                    pushups: 0,
-                    situps: 0,
-                    squats: 0
-                };
-            }
-
-            migrateMassage(massage) {
-                return massage || {
-                    completed: false,
-                    time: 0
-                };
-            }
-
-            migrateStudy(study) {
-                const result = {
-                    completed: study?.completed || false,
-                    english: study?.english || false,
-                    bookkeeping: study?.bookkeeping || false,
-                    fp: study?.fp || false,
-                    ai: study?.ai || false,
-                    englishMemo: study?.englishMemo || (study?.memo || ''),
-                    bookkeepingMemo: study?.bookkeepingMemo || '',
-                    fpMemo: study?.fpMemo || '',
-                    aiMemo: study?.aiMemo || ''
-                };
-                return result;
-            }
-
-            migrateReading(reading) {
-                return reading || {
-                    completed: false,
-                    time: 0,
-                    title: ''
-                };
-            }
-
-            // 記録を保存
             saveRecord(recordData) {
-                const today = Utils.getToday();
-                this.appData.records[today] = recordData;
-                return this.saveToStorage();
+                this.data.records[Utils.getToday()] = recordData;
+                return this.save();
             }
 
-            // 今日の記録を取得
             getTodayRecord() {
-                const today = Utils.getToday();
-                return this.appData.records[today] || null;
+                return this.data.records[Utils.getToday()] || null;
             }
 
-            // 継続日数を計算
             calculateStreak(category) {
                 let streak = 0;
                 const today = new Date();
@@ -778,7 +879,7 @@
                     checkDate.setDate(checkDate.getDate() - i);
                     const dateStr = Utils.formatDate(checkDate);
                     
-                    const record = this.appData.records[dateStr];
+                    const record = this.data.records[dateStr];
                     if (record?.[category]?.completed) {
                         streak++;
                     } else {
@@ -789,74 +890,64 @@
                 return streak;
             }
 
-            // 全データを削除
-            clearAllData() {
-                try {
-                    localStorage.removeItem(APP.STORAGE_KEY);
-                    localStorage.removeItem(APP.SETTINGS_KEY);
-                    
-                    this.appData = {
-                        records: {},
-                        version: APP.VERSION,
-                        lastUpdated: new Date().toISOString()
-                    };
-                    this.appSettings = {
-                        notificationEnabled: false,
-                        notificationTime: '20:00',
-                        version: APP.VERSION
-                    };
-                    
-                    return true;
-                } catch(e) {
-                    console.error('Clear data failed:', e);
-                    return false;
-                }
+            getStats() {
+                const stats = {};
+                CONFIG.CATEGORIES.forEach(category => {
+                    stats[category] = Object.values(this.data.records)
+                        .filter(record => record[category]?.completed).length;
+                });
+                return stats;
+            }
+
+            clear() {
+                const success = Storage.remove(CONFIG.STORAGE_KEY) && Storage.remove(CONFIG.SETTINGS_KEY);
+                if (success) this.reset();
+                return success;
             }
         }
 
-        // ====================
-        // UI管理クラス
-        // ====================
+        // ===============================
+        // UI管理
+        // ===============================
         class UIManager {
             constructor() {
                 this.currentTab = 'record';
                 this.isLoading = false;
+                this.elements = {};
+                this.cacheElements();
             }
 
-            // 初期化
+            cacheElements() {
+                Object.entries(SELECTORS).forEach(([key, selector]) => {
+                    this.elements[key] = document.querySelector(selector);
+                });
+            }
+
             init() {
                 this.updateCurrentDate();
-                this.setupEventListeners();
+                this.bindEvents();
             }
 
-            // 現在の日付を表示
             updateCurrentDate() {
-                const today = new Date();
-                const dateStr = `${today.getMonth() + 1}月${today.getDate()}日（${['日', '月', '火', '水', '木', '金', '土'][today.getDay()]}）`;
-                const dateElement = document.getElementById('currentDate');
-                if (dateElement) {
-                    dateElement.textContent = dateStr;
+                if (this.elements.CURRENT_DATE) {
+                    this.elements.CURRENT_DATE.textContent = Utils.getDateString(new Date());
                 }
             }
 
-            // イベントリスナーの設定
-            setupEventListeners() {
-                // タブ切り替え - thisを明示的にバインド
+            bindEvents() {
+                // タブ切り替え
                 document.querySelectorAll('.nav-tab').forEach(tab => {
                     tab.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const tabName = e.target.dataset.tab;
-                        console.log('Tab clicked:', tabName); // デバッグ用
-                        this.showTab(tabName);
+                        this.showTab(e.target.dataset.tab);
                     });
                 });
 
-                // 勉強項目のチェックボックス
+                // 勉強項目チェックボックス
                 document.querySelectorAll('[data-subject]').forEach(label => {
                     label.addEventListener('click', (e) => {
                         e.preventDefault();
-                        const subject = label.dataset.subject;
-                        this.toggleStudyCheck(subject);
+                        this.toggleStudyCheck(label.dataset.subject);
                     });
                 });
 
@@ -869,197 +960,148 @@
                     });
                 }
 
-                // ボタンのイベント - 存在チェック追加
-                const saveRecordBtn = document.getElementById('saveRecordBtn');
-                if (saveRecordBtn) {
-                    saveRecordBtn.addEventListener('click', () => app.saveRecord());
-                }
+                // ボタンイベント
+                this.bindButtonEvents();
+            }
 
-                const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-                if (saveSettingsBtn) {
-                    saveSettingsBtn.addEventListener('click', () => app.saveSettings());
-                }
+            bindButtonEvents() {
+                const buttonEvents = [
+                    ['SAVE_RECORD', () => app.saveRecord()],
+                    ['SAVE_SETTINGS', () => app.saveSettings()],
+                    ['EXPORT', () => app.exportData()],
+                    ['IMPORT', () => app.importData()],
+                    ['CLEAR', () => app.clearAllData()]
+                ];
 
-                const exportBtn = document.getElementById('exportBtn');
-                if (exportBtn) {
-                    exportBtn.addEventListener('click', () => app.exportData());
-                }
+                buttonEvents.forEach(([key, handler]) => {
+                    if (this.elements[key]) {
+                        this.elements[key].addEventListener('click', handler);
+                    }
+                });
 
-                const importBtn = document.getElementById('importBtn');
-                if (importBtn) {
-                    importBtn.addEventListener('click', () => app.importData());
-                }
-
-                const clearBtn = document.getElementById('clearBtn');
-                if (clearBtn) {
-                    clearBtn.addEventListener('click', () => app.clearAllData());
-                }
-
-                const importFile = document.getElementById('importFile');
-                if (importFile) {
-                    importFile.addEventListener('change', (e) => app.handleImportFile(e));
+                if (this.elements.IMPORT_FILE) {
+                    this.elements.IMPORT_FILE.addEventListener('change', (e) => app.handleImportFile(e));
                 }
             }
 
-            // タブ切り替え
             showTab(tabName) {
-                console.log('showTab called with:', tabName); // デバッグ用
-                
-                if (this.isLoading) {
-                    console.log('Loading state, tab switch prevented');
-                    return;
-                }
-                
-                if (!tabName) {
-                    console.error('Tab name is undefined');
-                    return;
-                }
-                
-                // 全てのタブボタンからactiveクラスを削除
-                document.querySelectorAll('.nav-tab').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // 全てのセクションからactiveクラスを削除
-                document.querySelectorAll('.section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                
-                // 選択されたタブボタンにactiveクラスを追加
+                if (this.isLoading || !tabName) return;
+
+                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+
                 const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
-                if (selectedTab) {
-                    selectedTab.classList.add('active');
-                } else {
-                    console.error('Tab button not found:', tabName);
-                }
-                
-                // 選択されたセクションにactiveクラスを追加
                 const selectedSection = document.getElementById(tabName);
-                if (selectedSection) {
+
+                if (selectedTab && selectedSection) {
+                    selectedTab.classList.add('active');
                     selectedSection.classList.add('active');
-                } else {
-                    console.error('Tab section not found:', tabName);
-                }
-                
-                this.currentTab = tabName;
-                console.log('Tab switched to:', tabName); // デバッグ用
-                
-                // 履歴タブの場合は履歴を更新
-                if (tabName === 'history') {
-                    this.updateHistory();
+                    this.currentTab = tabName;
+
+                    if (tabName === 'history') {
+                        this.updateHistory();
+                    }
                 }
             }
 
-            // 勉強項目のチェック切り替え
             toggleStudyCheck(subject) {
                 const checkbox = document.getElementById(subject);
-                const label = checkbox.closest('.study-checkbox');
+                const label = checkbox?.closest('.study-checkbox');
                 
-                checkbox.checked = !checkbox.checked;
-                label.classList.toggle('checked', checkbox.checked);
+                if (checkbox && label) {
+                    checkbox.checked = !checkbox.checked;
+                    label.classList.toggle('checked', checkbox.checked);
+                }
             }
 
-            // 通知設定の切り替え
             toggleNotification() {
-                const checkbox = document.getElementById('notificationEnabled');
-                const item = checkbox.closest('.checkbox-item');
+                const checkbox = document.getElementById('notification-enabled');
+                const item = checkbox?.closest('.checkbox-item');
                 
-                checkbox.checked = !checkbox.checked;
-                item.classList.toggle('checked', checkbox.checked);
+                if (checkbox && item) {
+                    checkbox.checked = !checkbox.checked;
+                    item.classList.toggle('checked', checkbox.checked);
+                }
             }
 
-            // 今日の記録を読み込み
             loadTodayRecord(record) {
                 if (!record) return;
 
                 // 運動
-                this.setInputValue('pushups', record.exercise.pushups);
-                this.setInputValue('situps', record.exercise.situps);
-                this.setInputValue('squats', record.exercise.squats);
-                
+                this.setFieldValue('pushups', record.exercise.pushups);
+                this.setFieldValue('situps', record.exercise.situps);
+                this.setFieldValue('squats', record.exercise.squats);
+
                 // マッサージ
-                this.setInputValue('massageTime', record.massage.time);
-                
+                this.setFieldValue('massage-time', record.massage.time);
+
                 // 勉強
-                APP.SUBJECTS.forEach(subject => {
+                CONFIG.SUBJECTS.forEach(subject => {
                     const checkbox = document.getElementById(subject);
-                    const label = checkbox.closest('.study-checkbox');
+                    const label = checkbox?.closest('.study-checkbox');
                     
-                    checkbox.checked = record.study[subject] || false;
-                    label.classList.toggle('checked', checkbox.checked);
+                    if (checkbox && label) {
+                        checkbox.checked = record.study[subject] || false;
+                        label.classList.toggle('checked', checkbox.checked);
+                    }
                     
-                    this.setInputValue(subject + 'Memo', record.study[subject + 'Memo']);
+                    this.setFieldValue(`${subject}-memo`, record.study[`${subject}Memo`]);
                 });
-                
+
                 // 読書
-                this.setInputValue('readingTime', record.reading.time);
-                this.setInputValue('bookTitle', record.reading.title);
+                this.setFieldValue('reading-time', record.reading.time);
+                this.setFieldValue('book-title', record.reading.title);
             }
 
-            // 入力値を設定（空の場合は何もしない）
-            setInputValue(id, value) {
+            setFieldValue(id, value) {
                 const element = document.getElementById(id);
                 if (element && value !== undefined && value !== null) {
                     element.value = value === 0 ? '' : value;
                 }
             }
 
-            // 設定を読み込み
             loadSettings(settings) {
-                document.getElementById('notificationEnabled').checked = settings.notificationEnabled;
-                document.getElementById('notificationTime').value = settings.notificationTime;
-                
-                const notificationItem = document.getElementById('notificationEnabled').closest('.checkbox-item');
-                notificationItem.classList.toggle('checked', settings.notificationEnabled);
+                const notificationCheckbox = document.getElementById('notification-enabled');
+                const notificationTime = document.getElementById('notification-time');
+                const notificationItem = notificationCheckbox?.closest('.checkbox-item');
+
+                if (notificationCheckbox && notificationTime && notificationItem) {
+                    notificationCheckbox.checked = settings.notificationEnabled;
+                    notificationTime.value = settings.notificationTime;
+                    notificationItem.classList.toggle('checked', settings.notificationEnabled);
+                }
             }
 
-            // 継続日数を更新
             updateStreaks(streaks) {
                 Object.entries(streaks).forEach(([category, count]) => {
-                    const element = document.getElementById(category + 'Streak');
+                    const element = document.getElementById(`${category}-streak`);
                     if (element) {
                         element.textContent = `${count}日継続`;
                     }
                 });
             }
 
-            // 履歴を更新
             updateHistory() {
-                this.updateSummaryStats();
-                this.updateWeeklyCalendar();
+                this.updateStats();
+                this.updateCalendar();
             }
 
-            // 統計情報を更新
-            updateSummaryStats() {
-                const stats = app.dataManager.appData.records;
-                const counts = {
-                    exercise: 0,
-                    massage: 0,
-                    study: 0,
-                    reading: 0
-                };
-                
-                Object.values(stats).forEach(record => {
-                    APP.CATEGORIES.forEach(category => {
-                        if (record[category]?.completed) {
-                            counts[category]++;
-                        }
-                    });
-                });
-                
-                Object.entries(counts).forEach(([category, count]) => {
-                    const element = document.getElementById(`total${category.charAt(0).toUpperCase() + category.slice(1)}Days`);
+            updateStats() {
+                const stats = app.dataManager.getStats();
+                Object.entries(stats).forEach(([category, count]) => {
+                    const element = document.getElementById(`total-${category}-days`);
                     if (element) {
                         element.textContent = count;
                     }
                 });
             }
 
-            // 週間カレンダーを更新
-            updateWeeklyCalendar() {
-                const calendar = document.getElementById('weeklyCalendar');
+            updateCalendar() {
+                const calendar = document.getElementById('weekly-calendar');
+                if (!calendar) return;
+
                 calendar.innerHTML = '';
-                
+
                 // ヘッダー
                 const days = ['日', '月', '火', '水', '木', '金', '土'];
                 days.forEach(day => {
@@ -1068,84 +1110,74 @@
                     dayElement.textContent = day;
                     calendar.appendChild(dayElement);
                 });
-                
+
                 // 過去7日間
                 const today = new Date();
                 for (let i = 6; i >= 0; i--) {
                     const date = new Date(today);
                     date.setDate(date.getDate() - i);
                     const dateStr = Utils.formatDate(date);
-                    const record = app.dataManager.appData.records[dateStr];
-                    
+                    const record = app.dataManager.data.records[dateStr];
+
                     const dayElement = document.createElement('div');
                     dayElement.className = 'calendar-day calendar-date';
-                    
+
                     if (i === 0) {
                         dayElement.classList.add('today');
-                    } else if (record && APP.CATEGORIES.some(cat => record[cat]?.completed)) {
+                    } else if (record && CONFIG.CATEGORIES.some(cat => record[cat]?.completed)) {
                         dayElement.classList.add('completed');
                     }
-                    
+
                     dayElement.textContent = date.getDate();
                     calendar.appendChild(dayElement);
                 }
             }
 
-            // ストレージステータスを更新
             updateStorageStatus(isWorking) {
-                const indicator = document.getElementById('storageIndicator');
-                const status = document.getElementById('storageStatus');
-                
-                if (indicator && status) {
-                    indicator.style.background = isWorking ? '#4caf50' : '#f44336';
-                    status.textContent = isWorking ? 'データ保存: 有効' : 'データ保存: 無効';
+                if (this.elements.STORAGE_INDICATOR && this.elements.STORAGE_STATUS) {
+                    this.elements.STORAGE_INDICATOR.className = `status-indicator ${isWorking ? '' : 'error'}`;
+                    this.elements.STORAGE_STATUS.textContent = isWorking ? 'データ保存: 有効' : 'データ保存: 無効';
                 }
             }
 
-            // ローディング状態の切り替え
             setLoading(isLoading) {
                 this.isLoading = isLoading;
-                const container = document.querySelector('.container');
-                const buttons = document.querySelectorAll('.save-btn, .data-btn');
-                
-                if (isLoading) {
-                    container.classList.add('loading');
-                    buttons.forEach(btn => btn.disabled = true);
-                } else {
-                    container.classList.remove('loading');
-                    buttons.forEach(btn => btn.disabled = false);
+                const container = this.elements.CONTAINER;
+                const buttons = document.querySelectorAll('button:not(.nav-tab)');
+
+                if (container) {
+                    container.classList.toggle('loading', isLoading);
                 }
+
+                buttons.forEach(btn => {
+                    btn.disabled = isLoading;
+                });
             }
 
-            // トースト表示
             showToast(message, type = 'success') {
-                const toast = document.getElementById('toast');
+                const toast = this.elements.TOAST;
                 if (!toast) return;
-                
+
                 toast.textContent = message;
-                toast.style.background = type === 'error' ? '#f44336' : '#4caf50';
+                toast.className = `toast ${type === 'error' ? 'error' : ''}`;
                 toast.style.display = 'block';
-                
+
                 setTimeout(() => {
                     toast.style.display = 'none';
                 }, 3000);
             }
         }
 
-        // ====================
-        // 通知管理クラス
-        // ====================
+        // ===============================
+        // 通知管理
+        // ===============================
         class NotificationManager {
             constructor() {
-                this.notificationTimer = null;
+                this.timer = null;
             }
 
-            // 通知許可を要求
             async requestPermission() {
-                if (!('Notification' in window)) {
-                    console.warn('This browser does not support notifications');
-                    return false;
-                }
+                if (!('Notification' in window)) return false;
                 
                 if (Notification.permission === 'default') {
                     const permission = await Notification.requestPermission();
@@ -1155,44 +1187,36 @@
                 return Notification.permission === 'granted';
             }
 
-            // 通知をセットアップ
-            setupNotification(settings) {
-                this.clearNotification();
+            setup(settings) {
+                this.clear();
                 
-                if (!settings.notificationEnabled || !('Notification' in window)) {
-                    return;
-                }
-                
-                if (Notification.permission === 'granted') {
-                    this.scheduleNotification(settings.notificationTime);
-                }
+                if (!settings.notificationEnabled || !('Notification' in window)) return;
+                if (Notification.permission !== 'granted') return;
+
+                this.schedule(settings.notificationTime);
             }
 
-            // 通知をスケジュール
-            scheduleNotification(timeString) {
+            schedule(timeString) {
                 const [hours, minutes] = timeString.split(':').map(Number);
                 const now = new Date();
                 const notificationTime = new Date();
                 notificationTime.setHours(hours, minutes, 0, 0);
-                
-                // 今日の通知時間が過ぎていたら明日に設定
+
                 if (notificationTime <= now) {
                     notificationTime.setDate(notificationTime.getDate() + 1);
                 }
-                
-                const timeUntilNotification = notificationTime.getTime() - now.getTime();
-                
-                this.notificationTimer = setTimeout(() => {
-                    this.showNotification();
-                    // 24時間後に再スケジュール
-                    this.scheduleNotification(timeString);
-                }, timeUntilNotification);
+
+                const delay = notificationTime.getTime() - now.getTime();
+
+                this.timer = setTimeout(() => {
+                    this.show();
+                    this.schedule(timeString); // 24時間後に再スケジュール
+                }, delay);
             }
 
-            // 通知を表示
-            showNotification() {
+            show() {
                 if (Notification.permission === 'granted') {
-                    new Notification('ルーティン記録アプリ v2.3', {
+                    new Notification('ルーティン記録アプリ v2.4', {
                         body: '今日のルーティンを記録しましょう！',
                         icon: '📝',
                         tag: 'routine-reminder'
@@ -1200,58 +1224,17 @@
                 }
             }
 
-            // 通知をクリア
-            clearNotification() {
-                if (this.notificationTimer) {
-                    clearTimeout(this.notificationTimer);
-                    this.notificationTimer = null;
+            clear() {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
                 }
             }
         }
 
-        // ====================
-        // ユーティリティクラス
-        // ====================
-        class Utilities {
-            // 日付をフォーマット
-            static formatDate(date) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
-            // 今日の日付を取得
-            static getToday() {
-                return this.formatDate(new Date());
-            }
-
-            // 入力値を検証
-            static validateInput(value, type, min = 0, max = Infinity) {
-                if (type === 'number') {
-                    const num = parseInt(value) || 0;
-                    return Math.max(min, Math.min(max, num));
-                }
-                if (type === 'string') {
-                    return String(value || '').trim();
-                }
-                return value;
-            }
-
-            // ファイルダウンロード
-            static downloadFile(data, filename, type = 'application/json') {
-                const blob = new Blob([data], { type });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                link.click();
-                URL.revokeObjectURL(link.href);
-            }
-        }
-
-        // ====================
-        // メインアプリケーションクラス
-        // ====================
+        // ===============================
+        // メインアプリケーション
+        // ===============================
         class RoutineApp {
             constructor() {
                 this.dataManager = new DataManager();
@@ -1259,51 +1242,47 @@
                 this.notifications = new NotificationManager();
             }
 
-            // アプリケーション初期化
             async init() {
                 try {
                     this.ui.setLoading(true);
-                    
+
                     // データ読み込み
-                    this.dataManager.loadFromStorage();
-                    
+                    const storageWorking = this.dataManager.load();
+                    this.ui.updateStorageStatus(storageWorking);
+
                     // UI初期化
                     this.ui.init();
-                    
+
                     // 今日の記録を読み込み
-                    const todayRecord = this.dataManager.getTodayRecord();
-                    this.ui.loadTodayRecord(todayRecord);
-                    
+                    this.ui.loadTodayRecord(this.dataManager.getTodayRecord());
+
                     // 設定を読み込み
-                    this.ui.loadSettings(this.dataManager.appSettings);
-                    
+                    this.ui.loadSettings(this.dataManager.settings);
+
                     // 継続日数を更新
                     this.updateStreaks();
-                    
+
                     // 履歴を更新
                     this.ui.updateHistory();
-                    
-                    // 通知の許可を要求
+
+                    // 通知設定
                     await this.notifications.requestPermission();
-                    this.notifications.setupNotification(this.dataManager.appSettings);
-                    
+                    this.notifications.setup(this.dataManager.settings);
+
                 } catch (error) {
-                    console.error('Initialization failed:', error);
+                    console.error('App initialization failed:', error);
                     this.ui.showToast('アプリの初期化に失敗しました', 'error');
                 } finally {
                     this.ui.setLoading(false);
                 }
             }
 
-            // 記録を保存
             saveRecord() {
                 try {
                     this.ui.setLoading(true);
-                    
-                    // 入力データを収集
+
                     const recordData = this.collectRecordData();
                     
-                    // データを保存
                     if (this.dataManager.saveRecord(recordData)) {
                         this.updateStreaks();
                         this.ui.showToast('記録を保存しました！');
@@ -1318,82 +1297,67 @@
                 }
             }
 
-            // 記録データを収集
             collectRecordData() {
                 const today = Utils.getToday();
-                
+
                 // 運動データ
-                const pushups = Utils.validateInput(document.getElementById('pushups').value, 'number', 0, 9999);
-                const situps = Utils.validateInput(document.getElementById('situps').value, 'number', 0, 9999);
-                const squats = Utils.validateInput(document.getElementById('squats').value, 'number', 0, 9999);
+                const pushups = Utils.validateNumber(document.getElementById('pushups')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const situps = Utils.validateNumber(document.getElementById('situps')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const squats = Utils.validateNumber(document.getElementById('squats')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
                 const exerciseCompleted = pushups > 0 || situps > 0 || squats > 0;
-                
+
                 // マッサージデータ
-                const massageTime = Utils.validateInput(document.getElementById('massageTime').value, 'number', 0, 999);
+                const massageTime = Utils.validateNumber(document.getElementById('massage-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
                 const massageCompleted = massageTime > 0;
-                
+
                 // 勉強データ
                 const studyData = {
                     completed: false,
-                    english: document.getElementById('english').checked,
-                    bookkeeping: document.getElementById('bookkeeping').checked,
-                    fp: document.getElementById('fp').checked,
-                    ai: document.getElementById('ai').checked
+                    english: document.getElementById('english')?.checked || false,
+                    bookkeeping: document.getElementById('bookkeeping')?.checked || false,
+                    fp: document.getElementById('fp')?.checked || false,
+                    ai: document.getElementById('ai')?.checked || false
                 };
-                
-                APP.SUBJECTS.forEach(subject => {
-                    const memo = Utils.validateInput(document.getElementById(subject + 'Memo').value, 'string');
-                    studyData[subject + 'Memo'] = memo.substring(0, 1000); // 制限
+
+                CONFIG.SUBJECTS.forEach(subject => {
+                    const memo = Utils.validateText(document.getElementById(`${subject}-memo`)?.value, CONFIG.LIMITS.MEMO_MAX);
+                    studyData[`${subject}Memo`] = memo;
                 });
-                
+
                 studyData.completed = studyData.english || studyData.bookkeeping || studyData.fp || studyData.ai;
-                
+
                 // 読書データ
-                const readingTime = Utils.validateInput(document.getElementById('readingTime').value, 'number', 0, 999);
-                const bookTitle = Utils.validateInput(document.getElementById('bookTitle').value, 'string').substring(0, 100);
+                const readingTime = Utils.validateNumber(document.getElementById('reading-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
+                const bookTitle = Utils.validateText(document.getElementById('book-title')?.value, CONFIG.LIMITS.TEXT_MAX);
                 const readingCompleted = readingTime > 0;
-                
+
                 return {
                     date: today,
-                    exercise: {
-                        completed: exerciseCompleted,
-                        pushups,
-                        situps,
-                        squats
-                    },
-                    massage: {
-                        completed: massageCompleted,
-                        time: massageTime
-                    },
+                    exercise: { completed: exerciseCompleted, pushups, situps, squats },
+                    massage: { completed: massageCompleted, time: massageTime },
                     study: studyData,
-                    reading: {
-                        completed: readingCompleted,
-                        time: readingTime,
-                        title: bookTitle
-                    }
+                    reading: { completed: readingCompleted, time: readingTime, title: bookTitle }
                 };
             }
 
-            // 継続日数を更新
             updateStreaks() {
                 const streaks = {};
-                APP.CATEGORIES.forEach(category => {
+                CONFIG.CATEGORIES.forEach(category => {
                     streaks[category] = this.dataManager.calculateStreak(category);
                 });
                 this.ui.updateStreaks(streaks);
             }
 
-            // 設定を保存
             saveSettings() {
                 try {
                     this.ui.setLoading(true);
-                    
-                    this.dataManager.appSettings.notificationEnabled = document.getElementById('notificationEnabled').checked;
-                    this.dataManager.appSettings.notificationTime = document.getElementById('notificationTime').value;
-                    this.dataManager.appSettings.version = APP.VERSION;
-                    
-                    if (this.dataManager.saveToStorage()) {
-                        this.notifications.setupNotification(this.dataManager.appSettings);
+
+                    this.dataManager.settings.notificationEnabled = document.getElementById('notification-enabled')?.checked || false;
+                    this.dataManager.settings.notificationTime = document.getElementById('notification-time')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME;
+                    this.dataManager.settings.version = CONFIG.VERSION;
+
+                    if (this.dataManager.save()) {
+                        this.notifications.setup(this.dataManager.settings);
                         this.ui.showToast('設定を保存しました！');
                     } else {
                         this.ui.showToast('設定の保存に失敗しました', 'error');
@@ -1406,19 +1370,18 @@
                 }
             }
 
-            // データエクスポート
             exportData() {
                 try {
                     const exportData = {
-                        records: this.dataManager.appData.records,
-                        settings: this.dataManager.appSettings,
-                        version: APP.VERSION,
+                        records: this.dataManager.data.records,
+                        settings: this.dataManager.settings,
+                        version: CONFIG.VERSION,
                         exportDate: new Date().toISOString()
                     };
-                    
+
                     const dataStr = JSON.stringify(exportData, null, 2);
-                    const filename = `routine_app_backup_v${APP.VERSION}_${Utils.getToday()}.json`;
-                    
+                    const filename = `routine_app_backup_v${CONFIG.VERSION}_${Utils.getToday()}.json`;
+
                     Utils.downloadFile(dataStr, filename);
                     this.ui.showToast('データをエクスポートしました！');
                 } catch (error) {
@@ -1427,34 +1390,32 @@
                 }
             }
 
-            // データインポート
             importData() {
-                document.getElementById('importFile').click();
+                document.getElementById('import-file')?.click();
             }
 
-            // インポートファイル処理
             handleImportFile(event) {
                 const file = event.target.files[0];
                 if (!file) return;
-                
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
                         const importedData = JSON.parse(e.target.result);
-                        
+
                         if (!importedData.records || !importedData.settings) {
                             this.ui.showToast('無効なデータファイルです', 'error');
                             return;
                         }
-                        
+
                         if (confirm('現在のデータを上書きしてインポートしますか？\n（現在のデータは失われます）')) {
-                            this.dataManager.appData = this.dataManager.migrateData(importedData);
-                            this.dataManager.appSettings = {...this.dataManager.appSettings, ...importedData.settings};
-                            this.dataManager.appSettings.version = APP.VERSION;
-                            
-                            if (this.dataManager.saveToStorage()) {
+                            this.dataManager.data = this.dataManager.migrateData(importedData);
+                            this.dataManager.settings = { ...this.dataManager.settings, ...importedData.settings };
+                            this.dataManager.settings.version = CONFIG.VERSION;
+
+                            if (this.dataManager.save()) {
                                 this.ui.loadTodayRecord(this.dataManager.getTodayRecord());
-                                this.ui.loadSettings(this.dataManager.appSettings);
+                                this.ui.loadSettings(this.dataManager.settings);
                                 this.updateStreaks();
                                 this.ui.updateHistory();
                                 this.ui.showToast('データをインポートしました！');
@@ -1467,33 +1428,22 @@
                         this.ui.showToast('ファイルの読み込みに失敗しました', 'error');
                     }
                 };
-                reader.readAsText(file);
                 
-                // ファイル入力をリセット
+                reader.readAsText(file);
                 event.target.value = '';
             }
 
-            // 全データ削除
             clearAllData() {
-                if (!confirm('本当に全てのデータを削除しますか？\n（この操作は取り消せません）')) {
-                    return;
-                }
-                
-                if (!confirm('最終確認：全データを削除しますか？')) {
-                    return;
-                }
-                
+                if (!confirm('本当に全てのデータを削除しますか？\n（この操作は取り消せません）')) return;
+                if (!confirm('最終確認：全データを削除しますか？')) return;
+
                 try {
-                    if (this.dataManager.clearAllData()) {
-                        // 通知をクリア
-                        this.notifications.clearNotification();
-                        
-                        // UIをリセット
+                    if (this.dataManager.clear()) {
+                        this.notifications.clear();
                         this.ui.loadTodayRecord(null);
-                        this.ui.loadSettings(this.dataManager.appSettings);
+                        this.ui.loadSettings(this.dataManager.settings);
                         this.updateStreaks();
                         this.ui.updateHistory();
-                        
                         this.ui.showToast('全データを削除しました');
                     } else {
                         this.ui.showToast('データ削除に失敗しました', 'error');
@@ -1505,32 +1455,19 @@
             }
         }
 
-        // ====================
-        // エイリアス
-        // ====================
-        const Utils = Utilities;
-
-        // ====================
+        // ===============================
         // アプリケーション起動
-        // ====================
+        // ===============================
         let app;
 
-        // アプリケーション初期化関数
         function initializeApp() {
-            console.log('DOM loaded, initializing app...'); // デバッグ用
             app = new RoutineApp();
-            app.init().then(() => {
-                console.log('App initialization completed'); // デバッグ用
-            }).catch((error) => {
-                console.error('App initialization failed:', error);
-            });
+            app.init().catch(console.error);
         }
 
-        // DOM読み込み完了後にアプリを初期化
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
-            // 既に読み込み完了している場合は即座に実行
             initializeApp();
         }
     </script>
