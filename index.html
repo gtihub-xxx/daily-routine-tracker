@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.4</title>
+    <title>ルーティン記録アプリ v2.4.1</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -454,7 +454,7 @@
 <body>
     <div class="container" id="app-container">
         <div class="header">
-            <div class="version-badge">v2.4</div>
+            <div class="version-badge">v2.4.1</div>
             <div class="date" id="current-date"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
@@ -505,8 +505,8 @@
                     </div>
                     
                     <div class="study-item">
-                        <div class="study-item-header">
-                            <label class="study-checkbox" data-subject="english">
+                        <div class="study-item-header" data-subject="english">
+                            <label class="study-checkbox">
                                 <input type="checkbox" id="english">
                                 <span>🇺🇸 英語</span>
                             </label>
@@ -516,8 +516,8 @@
                     </div>
 
                     <div class="study-item">
-                        <div class="study-item-header">
-                            <label class="study-checkbox" data-subject="bookkeeping">
+                        <div class="study-item-header" data-subject="bookkeeping">
+                            <label class="study-checkbox">
                                 <input type="checkbox" id="bookkeeping">
                                 <span>📊 簿記</span>
                             </label>
@@ -527,8 +527,8 @@
                     </div>
 
                     <div class="study-item">
-                        <div class="study-item-header">
-                            <label class="study-checkbox" data-subject="fp">
+                        <div class="study-item-header" data-subject="fp">
+                            <label class="study-checkbox">
                                 <input type="checkbox" id="fp">
                                 <span>💰 ファイナンシャルプランナー</span>
                             </label>
@@ -538,8 +538,8 @@
                     </div>
 
                     <div class="study-item">
-                        <div class="study-item-header">
-                            <label class="study-checkbox" data-subject="ai">
+                        <div class="study-item-header" data-subject="ai">
+                            <label class="study-checkbox">
                                 <input type="checkbox" id="ai">
                                 <span>🤖 AI</span>
                             </label>
@@ -627,8 +627,8 @@
                         <div class="status-indicator" id="storage-indicator"></div>
                         <span id="storage-status">データ保存: 確認中...</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.4</div>
-                    <div>改善: 完全リファクタリング版</div>
+                    <div>ルーティン記録アプリ v2.4.1</div>
+                    <div>修正: チェックボックス機能の改善</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
             </section>
@@ -644,7 +644,7 @@
         // 定数定義
         // ===============================
         const CONFIG = {
-            VERSION: '2.4',
+            VERSION: '2.4.1',
             STORAGE_KEY: 'routineAppData_v2',
             SETTINGS_KEY: 'routineAppSettings_v2',
             
@@ -943,18 +943,42 @@
                     });
                 });
 
-                // 勉強項目チェックボックス
-                document.querySelectorAll('[data-subject]').forEach(label => {
-                    label.addEventListener('click', (e) => {
+                // 勉強項目チェックボックス - 直接checkboxにイベントを設定
+                CONFIG.SUBJECTS.forEach(subject => {
+                    const checkbox = document.getElementById(subject);
+                    if (checkbox) {
+                        checkbox.addEventListener('change', (e) => {
+                            this.updateStudyCheckVisual(subject, e.target.checked);
+                        });
+                    }
+                });
+
+                // 勉強項目ラベルクリック
+                document.querySelectorAll('[data-subject]').forEach(header => {
+                    header.addEventListener('click', (e) => {
+                        // checkboxがクリックされた場合は何もしない
+                        if (e.target.type === 'checkbox') return;
+                        
                         e.preventDefault();
-                        this.toggleStudyCheck(label.dataset.subject);
+                        this.toggleStudyCheck(header.dataset.subject);
                     });
                 });
 
-                // 通知チェックボックス
+                // 通知チェックボックス - 直接checkboxにイベントを設定
+                const notificationCheckbox = document.getElementById('notification-enabled');
+                if (notificationCheckbox) {
+                    notificationCheckbox.addEventListener('change', (e) => {
+                        this.updateNotificationVisual(e.target.checked);
+                    });
+                }
+
+                // 通知ラベルクリック
                 const notificationToggle = document.querySelector('[data-toggle="notification"]');
                 if (notificationToggle) {
                     notificationToggle.addEventListener('click', (e) => {
+                        // checkboxがクリックされた場合は何もしない
+                        if (e.target.type === 'checkbox') return;
+                        
                         e.preventDefault();
                         this.toggleNotification();
                     });
@@ -1006,21 +1030,37 @@
 
             toggleStudyCheck(subject) {
                 const checkbox = document.getElementById(subject);
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    this.updateStudyCheckVisual(subject, checkbox.checked);
+                }
+            }
+
+            updateStudyCheckVisual(subject, checked) {
+                const checkbox = document.getElementById(subject);
                 const label = checkbox?.closest('.study-checkbox');
                 
                 if (checkbox && label) {
-                    checkbox.checked = !checkbox.checked;
-                    label.classList.toggle('checked', checkbox.checked);
+                    checkbox.checked = checked;
+                    label.classList.toggle('checked', checked);
                 }
             }
 
             toggleNotification() {
                 const checkbox = document.getElementById('notification-enabled');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    this.updateNotificationVisual(checkbox.checked);
+                }
+            }
+
+            updateNotificationVisual(checked) {
+                const checkbox = document.getElementById('notification-enabled');
                 const item = checkbox?.closest('.checkbox-item');
                 
                 if (checkbox && item) {
-                    checkbox.checked = !checkbox.checked;
-                    item.classList.toggle('checked', checkbox.checked);
+                    checkbox.checked = checked;
+                    item.classList.toggle('checked', checked);
                 }
             }
 
@@ -1037,14 +1077,8 @@
 
                 // 勉強
                 CONFIG.SUBJECTS.forEach(subject => {
-                    const checkbox = document.getElementById(subject);
-                    const label = checkbox?.closest('.study-checkbox');
-                    
-                    if (checkbox && label) {
-                        checkbox.checked = record.study[subject] || false;
-                        label.classList.toggle('checked', checkbox.checked);
-                    }
-                    
+                    const isChecked = record.study[subject] || false;
+                    this.updateStudyCheckVisual(subject, isChecked);
                     this.setFieldValue(`${subject}-memo`, record.study[`${subject}Memo`]);
                 });
 
@@ -1061,15 +1095,13 @@
             }
 
             loadSettings(settings) {
-                const notificationCheckbox = document.getElementById('notification-enabled');
                 const notificationTime = document.getElementById('notification-time');
-                const notificationItem = notificationCheckbox?.closest('.checkbox-item');
-
-                if (notificationCheckbox && notificationTime && notificationItem) {
-                    notificationCheckbox.checked = settings.notificationEnabled;
+                if (notificationTime) {
                     notificationTime.value = settings.notificationTime;
-                    notificationItem.classList.toggle('checked', settings.notificationEnabled);
                 }
+                
+                // 通知チェックボックスの状態を設定
+                this.updateNotificationVisual(settings.notificationEnabled);
             }
 
             updateStreaks(streaks) {
@@ -1216,7 +1248,7 @@
 
             show() {
                 if (Notification.permission === 'granted') {
-                    new Notification('ルーティン記録アプリ v2.4', {
+                    new Notification('ルーティン記録アプリ v2.4.1', {
                         body: '今日のルーティンを記録しましょう！',
                         icon: '📝',
                         tag: 'routine-reminder'
