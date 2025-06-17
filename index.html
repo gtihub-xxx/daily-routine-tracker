@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.4.1</title>
+    <title>ルーティン記録アプリ v2.5.0</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -260,6 +260,10 @@
             cursor: not-allowed;
         }
 
+        .btn-exercise { background: #ff6b6b; }
+        .btn-massage { background: #4ecdc4; }
+        .btn-study { background: #45b7d1; }
+        .btn-reading { background: #96ceb4; }
         .btn-export { background: #28a745; }
         .btn-import { background: #007bff; }
         .btn-clear { background: var(--error-color); }
@@ -323,6 +327,70 @@
         .calendar-date.today {
             background: #2196f3;
             color: var(--background-white);
+        }
+
+        /* Exercise Totals */
+        .exercise-totals {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .exercise-total-item {
+            display: flex;
+            align-items: center;
+            background: var(--background-white);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .exercise-total-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .exercise-total-sum {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: var(--background-white);
+            border: none;
+            font-weight: bold;
+        }
+
+        .exercise-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .exercise-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .exercise-total-sum .exercise-name {
+            color: var(--background-white);
+        }
+
+        .exercise-count {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .exercise-total-sum .exercise-count {
+            color: var(--background-white);
+            font-size: 20px;
         }
 
         /* Statistics */
@@ -454,7 +522,7 @@
 <body>
     <div class="container" id="app-container">
         <div class="header">
-            <div class="version-badge">v2.4.1</div>
+            <div class="version-badge">v2.5.0</div>
             <div class="date" id="current-date"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
@@ -569,7 +637,7 @@
                     <button class="btn-secondary btn-reading" id="save-reading-btn">📖 読書を記録</button>
                 </div>
 
-                <button class="btn-primary" id="save-record-btn">記録を保存</button>
+                <button class="btn-primary" id="save-record-btn">💾 全ての記録を保存</button>
             </section>
 
             <!-- 履歴タブ -->
@@ -590,6 +658,40 @@
                     <div class="stat-card">
                         <div class="stat-number" id="total-reading-days">0</div>
                         <div class="stat-label">読書日数</div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-name">💪 運動の累計回数</div>
+                    <div class="exercise-totals">
+                        <div class="exercise-total-item">
+                            <div class="exercise-icon">💪</div>
+                            <div class="exercise-info">
+                                <div class="exercise-name">腕立て伏せ</div>
+                                <div class="exercise-count" id="total-pushups">0回</div>
+                            </div>
+                        </div>
+                        <div class="exercise-total-item">
+                            <div class="exercise-icon">🔥</div>
+                            <div class="exercise-info">
+                                <div class="exercise-name">腹筋</div>
+                                <div class="exercise-count" id="total-situps">0回</div>
+                            </div>
+                        </div>
+                        <div class="exercise-total-item">
+                            <div class="exercise-icon">🦵</div>
+                            <div class="exercise-info">
+                                <div class="exercise-name">スクワット</div>
+                                <div class="exercise-count" id="total-squats">0回</div>
+                            </div>
+                        </div>
+                        <div class="exercise-total-item exercise-total-sum">
+                            <div class="exercise-icon">🏆</div>
+                            <div class="exercise-info">
+                                <div class="exercise-name">総合計</div>
+                                <div class="exercise-count" id="total-all-exercises">0回</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -632,8 +734,8 @@
                         <div class="status-indicator" id="storage-indicator"></div>
                         <span id="storage-status">データ保存: 確認中...</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.4.1</div>
-                    <div>修正: チェックボックス機能の改善</div>
+                    <div>ルーティン記録アプリ v2.5.0</div>
+                    <div>新機能: 項目別記録ボタン追加</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
             </section>
@@ -649,7 +751,7 @@
         // 定数定義
         // ===============================
         const CONFIG = {
-            VERSION: '2.4.1',
+            VERSION: '2.5.0',
             STORAGE_KEY: 'routineAppData_v2',
             SETTINGS_KEY: 'routineAppSettings_v2',
             
@@ -673,6 +775,10 @@
             CONTAINER: '#app-container',
             CURRENT_DATE: '#current-date',
             SAVE_RECORD: '#save-record-btn',
+            SAVE_EXERCISE: '#save-exercise-btn',
+            SAVE_MASSAGE: '#save-massage-btn',
+            SAVE_STUDY: '#save-study-btn',
+            SAVE_READING: '#save-reading-btn',
             SAVE_SETTINGS: '#save-settings-btn',
             EXPORT: '#export-btn',
             IMPORT: '#import-btn',
@@ -904,6 +1010,26 @@
                 return stats;
             }
 
+            getExerciseTotals() {
+                const totals = {
+                    pushups: 0,
+                    situps: 0,
+                    squats: 0,
+                    total: 0
+                };
+
+                Object.values(this.data.records).forEach(record => {
+                    if (record.exercise) {
+                        totals.pushups += record.exercise.pushups || 0;
+                        totals.situps += record.exercise.situps || 0;
+                        totals.squats += record.exercise.squats || 0;
+                    }
+                });
+
+                totals.total = totals.pushups + totals.situps + totals.squats;
+                return totals;
+            }
+
             clear() {
                 const success = Storage.remove(CONFIG.STORAGE_KEY) && Storage.remove(CONFIG.SETTINGS_KEY);
                 if (success) this.reset();
@@ -996,6 +1122,10 @@
             bindButtonEvents() {
                 const buttonEvents = [
                     ['SAVE_RECORD', () => app.saveRecord()],
+                    ['SAVE_EXERCISE', () => app.saveExercise()],
+                    ['SAVE_MASSAGE', () => app.saveMassage()],
+                    ['SAVE_STUDY', () => app.saveStudy()],
+                    ['SAVE_READING', () => app.saveReading()],
                     ['SAVE_SETTINGS', () => app.saveSettings()],
                     ['EXPORT', () => app.exportData()],
                     ['IMPORT', () => app.importData()],
@@ -1120,6 +1250,7 @@
 
             updateHistory() {
                 this.updateStats();
+                this.updateExerciseTotals();
                 this.updateCalendar();
             }
 
@@ -1131,6 +1262,22 @@
                         element.textContent = count;
                     }
                 });
+            }
+
+            updateExerciseTotals() {
+                const totals = app.dataManager.getExerciseTotals();
+                
+                const elements = {
+                    pushups: document.getElementById('total-pushups'),
+                    situps: document.getElementById('total-situps'),
+                    squats: document.getElementById('total-squats'),
+                    total: document.getElementById('total-all-exercises')
+                };
+
+                if (elements.pushups) elements.pushups.textContent = `${totals.pushups.toLocaleString()}回`;
+                if (elements.situps) elements.situps.textContent = `${totals.situps.toLocaleString()}回`;
+                if (elements.squats) elements.squats.textContent = `${totals.squats.toLocaleString()}回`;
+                if (elements.total) elements.total.textContent = `${totals.total.toLocaleString()}回`;
             }
 
             updateCalendar() {
@@ -1253,7 +1400,7 @@
 
             show() {
                 if (Notification.permission === 'granted') {
-                    new Notification('ルーティン記録アプリ v2.4.1', {
+                    new Notification('ルーティン記録アプリ v2.5.0', {
                         body: '今日のルーティンを記録しましょう！',
                         icon: '📝',
                         tag: 'routine-reminder'
@@ -1332,6 +1479,130 @@
                 } finally {
                     this.ui.setLoading(false);
                 }
+            }
+
+            saveExercise() {
+                this.savePartialRecord('exercise', '💪 運動');
+            }
+
+            saveMassage() {
+                this.savePartialRecord('massage', '🫧 マッサージ');
+            }
+
+            saveStudy() {
+                this.savePartialRecord('study', '📚 勉強');
+            }
+
+            saveReading() {
+                this.savePartialRecord('reading', '📖 読書');
+            }
+
+            savePartialRecord(category, categoryName) {
+                try {
+                    this.ui.setLoading(true);
+
+                    // 既存の記録を取得（今日のデータがある場合）
+                    let existingRecord = this.dataManager.getTodayRecord();
+                    if (!existingRecord) {
+                        existingRecord = this.getEmptyRecord();
+                    }
+
+                    // 指定されたカテゴリのデータのみ更新
+                    const newCategoryData = this.collectCategoryData(category);
+                    existingRecord[category] = newCategoryData;
+
+                    // 更新された記録を保存
+                    if (this.dataManager.saveRecord(existingRecord)) {
+                        this.updateStreaks();
+                        this.ui.showToast(`${categoryName}を記録しました！`);
+                    } else {
+                        this.ui.showToast(`${categoryName}の保存に失敗しました`, 'error');
+                    }
+                } catch (error) {
+                    console.error(`Save ${category} failed:`, error);
+                    this.ui.showToast(`${categoryName}の保存中にエラーが発生しました`, 'error');
+                } finally {
+                    this.ui.setLoading(false);
+                }
+            }
+
+            getEmptyRecord() {
+                const today = Utils.getToday();
+                return {
+                    date: today,
+                    exercise: { completed: false, pushups: 0, situps: 0, squats: 0 },
+                    massage: { completed: false, time: 0 },
+                    study: {
+                        completed: false,
+                        english: false,
+                        bookkeeping: false,
+                        fp: false,
+                        ai: false,
+                        englishMemo: '',
+                        bookkeepingMemo: '',
+                        fpMemo: '',
+                        aiMemo: ''
+                    },
+                    reading: { completed: false, time: 0, title: '' }
+                };
+            }
+
+            collectCategoryData(category) {
+                switch (category) {
+                    case 'exercise':
+                        return this.collectExerciseData();
+                    case 'massage':
+                        return this.collectMassageData();
+                    case 'study':
+                        return this.collectStudyData();
+                    case 'reading':
+                        return this.collectReadingData();
+                    default:
+                        throw new Error(`Unknown category: ${category}`);
+                }
+            }
+
+            collectExerciseData() {
+                const pushups = Utils.validateNumber(document.getElementById('pushups')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const situps = Utils.validateNumber(document.getElementById('situps')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const squats = Utils.validateNumber(document.getElementById('squats')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const completed = pushups > 0 || situps > 0 || squats > 0;
+
+                return { completed, pushups, situps, squats };
+            }
+
+            collectMassageData() {
+                const time = Utils.validateNumber(document.getElementById('massage-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
+                const completed = time > 0;
+
+                return { completed, time };
+            }
+
+            collectStudyData() {
+                const studyData = {
+                    completed: false,
+                    english: document.getElementById('english')?.checked || false,
+                    bookkeeping: document.getElementById('bookkeeping')?.checked || false,
+                    fp: document.getElementById('fp')?.checked || false,
+                    ai: document.getElementById('ai')?.checked || false
+                };
+
+                CONFIG.SUBJECTS.forEach(subject => {
+                    const memo = Utils.validateText(document.getElementById(`${subject}-memo`)?.value, CONFIG.LIMITS.MEMO_MAX);
+                    studyData[`${subject}Memo`] = memo;
+                });
+
+                studyData.completed = studyData.english || studyData.bookkeeping || studyData.fp || studyData.ai;
+
+                return studyData;
+            }
+
+            collectReadingData() {
+                const time = Utils.validateNumber(document.getElementById('reading-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
+                const title = Utils.validateText(document.getElementById('book-title')?.value, CONFIG.LIMITS.TEXT_MAX);
+                const completed = time > 0;
+
+                return { completed, time, title };
             }
 
             collectRecordData() {
