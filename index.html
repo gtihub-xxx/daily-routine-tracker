@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ルーティン記録アプリ v2.5.2</title>
+    <title>ルーティン記録アプリ v2.7.0</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -329,6 +329,51 @@
             color: var(--background-white);
         }
 
+        /* Period Tabs */
+        .period-tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 15px;
+            gap: 2px;
+        }
+
+        .period-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .period-tab.active {
+            background: var(--background-white);
+            color: #4facfe;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .period-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .period-info {
+            background: #e8f4fd;
+            color: #2c5aa0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
         /* Exercise Totals */
         .exercise-totals {
             display: flex;
@@ -391,6 +436,118 @@
         .exercise-total-sum .exercise-count {
             color: var(--background-white);
             font-size: 20px;
+        }
+
+        /* Other Activity Totals */
+        .other-totals {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .other-total-item {
+            display: flex;
+            align-items: center;
+            background: var(--background-white);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .other-total-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .other-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .other-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .other-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .other-count {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        /* Study Totals */
+        .study-totals {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .study-total-item {
+            display: flex;
+            align-items: center;
+            background: var(--background-white);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .study-total-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .study-total-sum {
+            background: linear-gradient(135deg, #45b7d1, #96ceb4);
+            color: var(--background-white);
+            border: none;
+            font-weight: bold;
+        }
+
+        .study-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .study-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .study-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .study-total-sum .study-name {
+            color: var(--background-white);
+        }
+
+        .study-count {
+            font-size: 16px;
+            font-weight: bold;
+            color: #45b7d1;
+        }
+
+        .study-total-sum .study-count {
+            color: var(--background-white);
+            font-size: 18px;
         }
 
         /* Statistics */
@@ -537,7 +694,7 @@
 <body>
     <div class="container" id="app-container">
         <div class="header">
-            <div class="version-badge">v2.5.2</div>
+            <div class="version-badge">v2.7.0</div>
             <div class="date" id="current-date"></div>
             <div class="subtitle">今日のルーティンを記録しましょう</div>
         </div>
@@ -552,6 +709,108 @@
             <!-- 記録タブ -->
             <section class="section active" id="record">
                 <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">🫧 マッサージの累計時間</span>
+                    </div>
+                    
+                    <div class="other-totals">
+                        <div class="other-total-item">
+                            <div class="other-icon">🫧</div>
+                            <div class="other-info">
+                                <div class="other-name">マッサージ時間</div>
+                                <div class="other-count" id="total-massage-time">0分</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">📅</div>
+                            <div class="other-info">
+                                <div class="other-name">実施日数</div>
+                                <div class="other-count" id="total-massage-days-period">0日</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">⏱️</div>
+                            <div class="other-info">
+                                <div class="other-name">平均時間/日</div>
+                                <div class="other-count" id="average-massage-time">0分</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📚 勉強の累計時間</span>
+                    </div>
+                    
+                    <div class="study-totals">
+                        <div class="study-total-item">
+                            <div class="study-icon">🇺🇸</div>
+                            <div class="study-info">
+                                <div class="study-name">英語</div>
+                                <div class="study-count" id="total-english-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">📊</div>
+                            <div class="study-info">
+                                <div class="study-name">簿記</div>
+                                <div class="study-count" id="total-bookkeeping-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">💰</div>
+                            <div class="study-info">
+                                <div class="study-name">FP</div>
+                                <div class="study-count" id="total-fp-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">🤖</div>
+                            <div class="study-info">
+                                <div class="study-name">AI</div>
+                                <div class="study-count" id="total-ai-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item study-total-sum">
+                            <div class="study-icon">📚</div>
+                            <div class="study-info">
+                                <div class="study-name">総学習日数</div>
+                                <div class="study-count" id="total-study-days-period">0日</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📖 読書の累計時間</span>
+                    </div>
+                    
+                    <div class="other-totals">
+                        <div class="other-total-item">
+                            <div class="other-icon">📖</div>
+                            <div class="other-info">
+                                <div class="other-name">読書時間</div>
+                                <div class="other-count" id="total-reading-time">0分</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">📚</div>
+                            <div class="other-info">
+                                <div class="other-name">読書日数</div>
+                                <div class="other-count" id="total-reading-days-period">0日</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">⏱️</div>
+                            <div class="other-info">
+                                <div class="other-name">平均時間/日</div>
+                                <div class="other-count" id="average-reading-time">0分</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                     <div class="section-title">
                         <span class="section-name">💪 運動</span>
                         <span class="streak-badge" id="exercise-streak">0日継続</span>
@@ -677,7 +936,21 @@
                 </div>
 
                 <div class="routine-section">
-                    <div class="section-name">💪 運動の累計回数</div>
+                    <div class="section-title">
+                        <span class="section-name">💪 運動の累計回数</span>
+                    </div>
+                    
+                    <div class="period-tabs">
+                        <button class="period-tab active" data-period="week">今週</button>
+                        <button class="period-tab" data-period="month">今月</button>
+                        <button class="period-tab" data-period="year">今年</button>
+                        <button class="period-tab" data-period="all">全期間</button>
+                    </div>
+                    
+                    <div class="period-info" id="period-info">
+                        今週 (月曜日〜日曜日)
+                    </div>
+                    
                     <div class="exercise-totals">
                         <div class="exercise-total-item">
                             <div class="exercise-icon">💪</div>
@@ -705,6 +978,110 @@
                             <div class="exercise-info">
                                 <div class="exercise-name">総合計</div>
                                 <div class="exercise-count" id="total-all-exercises">0回</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">🫧 マッサージの累計時間</span>
+                    </div>
+                    
+                    <div class="other-totals">
+                        <div class="other-total-item">
+                            <div class="other-icon">🫧</div>
+                            <div class="other-info">
+                                <div class="other-name">マッサージ時間</div>
+                                <div class="other-count" id="total-massage-time">0分</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">📅</div>
+                            <div class="other-info">
+                                <div class="other-name">実施日数</div>
+                                <div class="other-count" id="total-massage-days-period">0日</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">⏱️</div>
+                            <div class="other-info">
+                                <div class="other-name">平均時間/日</div>
+                                <div class="other-count" id="average-massage-time">0分</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📚 勉強の累計時間</span>
+                    </div>
+                    
+                    <div class="study-totals">
+                        <div class="study-total-item">
+                            <div class="study-icon">🇺🇸</div>
+                            <div class="study-info">
+                                <div class="study-name">英語</div>
+                                <div class="study-count" id="total-english-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">📊</div>
+                            <div class="study-info">
+                                <div class="study-name">簿記</div>
+                                <div class="study-count" id="total-bookkeeping-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">💰</div>
+                            <div class="study-info">
+                                <div class="study-name">FP</div>
+                                <div class="study-count" id="total-fp-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item">
+                            <div class="study-icon">🤖</div>
+                            <div class="study-info">
+                                <div class="study-name">AI</div>
+                                <div class="study-count" id="total-ai-days">0日</div>
+                            </div>
+                        </div>
+                        <div class="study-total-item study-total-sum">
+                            <div class="study-icon">📚</div>
+                            <div class="study-info">
+                                <div class="study-name">総学習日数</div>
+                                <div class="study-count" id="total-study-days-period">0日</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="routine-section">
+                    <div class="section-title">
+                        <span class="section-name">📖 読書の累計時間</span>
+                    </div>
+                    
+                    <div class="other-totals">
+                        <div class="other-total-item">
+                            <div class="other-icon">📖</div>
+                            <div class="other-info">
+                                <div class="other-name">読書時間</div>
+                                <div class="other-count" id="total-reading-time">0分</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">📚</div>
+                            <div class="other-info">
+                                <div class="other-name">読書日数</div>
+                                <div class="other-count" id="total-reading-days-period">0日</div>
+                            </div>
+                        </div>
+                        <div class="other-total-item">
+                            <div class="other-icon">⏱️</div>
+                            <div class="other-info">
+                                <div class="other-name">平均時間/日</div>
+                                <div class="other-count" id="average-reading-time">0分</div>
                             </div>
                         </div>
                     </div>
@@ -759,8 +1136,8 @@
                         <div class="status-indicator" id="storage-indicator"></div>
                         <span id="storage-status">データ保存: 確認中...</span>
                     </div>
-                    <div>ルーティン記録アプリ v2.5.2</div>
-                    <div>新機能: リマインド2回設定</div>
+                    <div>ルーティン記録アプリ v2.7.0</div>
+                    <div>新機能: 全項目の累計表示（運動・マッサージ・勉強・読書）</div>
                     <div>最終更新: 2025年6月16日</div>
                 </div>
             </section>
@@ -776,7 +1153,7 @@
         // 定数定義
         // ===============================
         const CONFIG = {
-            VERSION: '2.5.2',
+            VERSION: '2.7.0',
             STORAGE_KEY: 'routineAppData_v2',
             SETTINGS_KEY: 'routineAppSettings_v2',
             
@@ -1045,7 +1422,7 @@
                 return stats;
             }
 
-            getExerciseTotals() {
+            getExerciseTotals(period = 'all') {
                 const totals = {
                     pushups: 0,
                     situps: 0,
@@ -1053,7 +1430,9 @@
                     total: 0
                 };
 
-                Object.values(this.data.records).forEach(record => {
+                const records = this.getRecordsForPeriod(period);
+
+                records.forEach(record => {
                     if (record.exercise) {
                         totals.pushups += record.exercise.pushups || 0;
                         totals.situps += record.exercise.situps || 0;
@@ -1063,6 +1442,162 @@
 
                 totals.total = totals.pushups + totals.situps + totals.squats;
                 return totals;
+            }
+
+            getMassageTotals(period = 'all') {
+                const records = this.getRecordsForPeriod(period);
+                let totalTime = 0;
+                let totalDays = 0;
+
+                records.forEach(record => {
+                    if (record.massage && record.massage.completed) {
+                        totalTime += record.massage.time || 0;
+                        totalDays++;
+                    }
+                });
+
+                const averageTime = totalDays > 0 ? Math.round(totalTime / totalDays) : 0;
+
+                return {
+                    totalTime,
+                    totalDays,
+                    averageTime
+                };
+            }
+
+            getStudyTotals(period = 'all') {
+                const records = this.getRecordsForPeriod(period);
+                const totals = {
+                    english: 0,
+                    bookkeeping: 0,
+                    fp: 0,
+                    ai: 0,
+                    totalDays: 0
+                };
+
+                records.forEach(record => {
+                    if (record.study) {
+                        if (record.study.english) totals.english++;
+                        if (record.study.bookkeeping) totals.bookkeeping++;
+                        if (record.study.fp) totals.fp++;
+                        if (record.study.ai) totals.ai++;
+                        if (record.study.completed) totals.totalDays++;
+                    }
+                });
+
+                return totals;
+            }
+
+            getReadingTotals(period = 'all') {
+                const records = this.getRecordsForPeriod(period);
+                let totalTime = 0;
+                let totalDays = 0;
+
+                records.forEach(record => {
+                    if (record.reading && record.reading.completed) {
+                        totalTime += record.reading.time || 0;
+                        totalDays++;
+                    }
+                });
+
+                const averageTime = totalDays > 0 ? Math.round(totalTime / totalDays) : 0;
+
+                return {
+                    totalTime,
+                    totalDays,
+                    averageTime
+                };
+            }
+
+            getRecordsForPeriod(period) {
+                const today = new Date();
+                const records = Object.values(this.data.records);
+
+                switch (period) {
+                    case 'week':
+                        return this.getWeekRecords(today, records);
+                    case 'month':
+                        return this.getMonthRecords(today, records);
+                    case 'year':
+                        return this.getYearRecords(today, records);
+                    case 'all':
+                    default:
+                        return records;
+                }
+            }
+
+            getWeekRecords(today, records) {
+                // 今週の月曜日を取得
+                const startOfWeek = new Date(today);
+                const dayOfWeek = startOfWeek.getDay();
+                const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 日曜日は6日前、月曜日は0日前
+                startOfWeek.setDate(startOfWeek.getDate() - daysToMonday);
+                startOfWeek.setHours(0, 0, 0, 0);
+
+                // 今週の日曜日を取得
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(endOfWeek.getDate() + 6);
+                endOfWeek.setHours(23, 59, 59, 999);
+
+                return records.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate >= startOfWeek && recordDate <= endOfWeek;
+                });
+            }
+
+            getMonthRecords(today, records) {
+                const year = today.getFullYear();
+                const month = today.getMonth();
+
+                return records.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate.getFullYear() === year && recordDate.getMonth() === month;
+                });
+            }
+
+            getYearRecords(today, records) {
+                const year = today.getFullYear();
+
+                return records.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate.getFullYear() === year;
+                });
+            }
+
+            getPeriodInfo(period) {
+                const today = new Date();
+                
+                switch (period) {
+                    case 'week':
+                        const startOfWeek = new Date(today);
+                        const dayOfWeek = startOfWeek.getDay();
+                        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                        startOfWeek.setDate(startOfWeek.getDate() - daysToMonday);
+                        
+                        const endOfWeek = new Date(startOfWeek);
+                        endOfWeek.setDate(endOfWeek.getDate() + 6);
+                        
+                        return `今週 (${startOfWeek.getMonth() + 1}/${startOfWeek.getDate()} 〜 ${endOfWeek.getMonth() + 1}/${endOfWeek.getDate()})`;
+                        
+                    case 'month':
+                        return `今月 (${today.getFullYear()}年${today.getMonth() + 1}月)`;
+                        
+                    case 'year':
+                        return `今年 (${today.getFullYear()}年)`;
+                        
+                    case 'all':
+                    default:
+                        const allRecords = Object.keys(this.data.records);
+                        if (allRecords.length === 0) {
+                            return '全期間 (記録なし)';
+                        }
+                        
+                        const sortedDates = allRecords.sort();
+                        const firstDate = new Date(sortedDates[0]);
+                        const lastDate = new Date(sortedDates[sortedDates.length - 1]);
+                        
+                        return `全期間 (${firstDate.getFullYear()}/${firstDate.getMonth() + 1}/${firstDate.getDate()} 〜 ${lastDate.getFullYear()}/${lastDate.getMonth() + 1}/${lastDate.getDate()})`;
+                }
             }
 
             clear() {
@@ -1078,6 +1613,7 @@
         class UIManager {
             constructor() {
                 this.currentTab = 'record';
+                this.currentPeriod = 'week'; // デフォルトは今週
                 this.isLoading = false;
                 this.elements = {};
                 this.cacheElements();
@@ -1127,6 +1663,14 @@
                         
                         e.preventDefault();
                         this.toggleStudyCheck(header.dataset.subject);
+                    });
+                });
+
+                // 期間タブ切り替え
+                document.querySelectorAll('.period-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.showPeriod(e.target.dataset.period);
                     });
                 });
 
@@ -1290,7 +1834,11 @@
 
             updateHistory() {
                 this.updateStats();
+                this.updatePeriodInfo();
                 this.updateExerciseTotals();
+                this.updateMassageTotals();
+                this.updateStudyTotals();
+                this.updateReadingTotals();
                 this.updateCalendar();
             }
 
@@ -1304,8 +1852,36 @@
                 });
             }
 
+            showPeriod(period) {
+                if (this.isLoading || !period) return;
+
+                this.currentPeriod = period;
+
+                // 期間タブの表示を更新
+                document.querySelectorAll('.period-tab').forEach(tab => tab.classList.remove('active'));
+                const selectedTab = document.querySelector(`[data-period="${period}"]`);
+                if (selectedTab) {
+                    selectedTab.classList.add('active');
+                }
+
+                // 期間情報と累計を更新
+                this.updatePeriodInfo();
+                this.updateExerciseTotals();
+                this.updateMassageTotals();
+                this.updateStudyTotals();
+                this.updateReadingTotals();
+            }
+
+            updatePeriodInfo() {
+                const periodInfo = app.dataManager.getPeriodInfo(this.currentPeriod);
+                const element = document.getElementById('period-info');
+                if (element) {
+                    element.textContent = periodInfo;
+                }
+            }
+
             updateExerciseTotals() {
-                const totals = app.dataManager.getExerciseTotals();
+                const totals = app.dataManager.getExerciseTotals(this.currentPeriod);
                 
                 const elements = {
                     pushups: document.getElementById('total-pushups'),
@@ -1318,6 +1894,48 @@
                 if (elements.situps) elements.situps.textContent = `${totals.situps.toLocaleString()}回`;
                 if (elements.squats) elements.squats.textContent = `${totals.squats.toLocaleString()}回`;
                 if (elements.total) elements.total.textContent = `${totals.total.toLocaleString()}回`;
+            }
+
+            updateMassageTotals() {
+                const totals = app.dataManager.getMassageTotals(this.currentPeriod);
+                
+                const timeElement = document.getElementById('total-massage-time');
+                const daysElement = document.getElementById('total-massage-days-period');
+                const averageElement = document.getElementById('average-massage-time');
+
+                if (timeElement) timeElement.textContent = `${totals.totalTime.toLocaleString()}分`;
+                if (daysElement) daysElement.textContent = `${totals.totalDays}日`;
+                if (averageElement) averageElement.textContent = `${totals.averageTime}分`;
+            }
+
+            updateStudyTotals() {
+                const totals = app.dataManager.getStudyTotals(this.currentPeriod);
+                
+                const elements = {
+                    english: document.getElementById('total-english-days'),
+                    bookkeeping: document.getElementById('total-bookkeeping-days'),
+                    fp: document.getElementById('total-fp-days'),
+                    ai: document.getElementById('total-ai-days'),
+                    total: document.getElementById('total-study-days-period')
+                };
+
+                if (elements.english) elements.english.textContent = `${totals.english}日`;
+                if (elements.bookkeeping) elements.bookkeeping.textContent = `${totals.bookkeeping}日`;
+                if (elements.fp) elements.fp.textContent = `${totals.fp}日`;
+                if (elements.ai) elements.ai.textContent = `${totals.ai}日`;
+                if (elements.total) elements.total.textContent = `${totals.totalDays}日`;
+            }
+
+            updateReadingTotals() {
+                const totals = app.dataManager.getReadingTotals(this.currentPeriod);
+                
+                const timeElement = document.getElementById('total-reading-time');
+                const daysElement = document.getElementById('total-reading-days-period');
+                const averageElement = document.getElementById('average-reading-time');
+
+                if (timeElement) timeElement.textContent = `${totals.totalTime.toLocaleString()}分`;
+                if (daysElement) daysElement.textContent = `${totals.totalDays}日`;
+                if (averageElement) averageElement.textContent = `${totals.averageTime}分`;
             }
 
             updateCalendar() {
@@ -1448,7 +2066,7 @@
 
             show(label = '') {
                 if (Notification.permission === 'granted') {
-                    new Notification('ルーティン記録アプリ v2.5.2', {
+                    new Notification('ルーティン記録アプリ v2.7.0', {
                         body: `${label}\n今日のルーティンを記録しましょう！`,
                         icon: '📝',
                         tag: `routine-reminder-${Date.now()}`
