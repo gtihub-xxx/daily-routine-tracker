@@ -2578,4 +2578,455 @@
              * 通知の表示
              */
             show(label = '') {
-                if (Notification
+                if (Notification.permission === 'granted') {
+                    new Notification('ルーティン記録アプリ v2.8.0', {
+                        body: `${label}\n今日のルーティンを記録しましょう！`,
+                        icon: '📝',
+                        tag: `routine-reminder-${Date.now()}`
+                    });
+                }
+            }
+
+            /**
+             * 通知のクリア
+             */
+            clear() {
+                this.timers.forEach(timer => clearTimeout(timer));
+                this.timers = [];
+            }
+        }
+
+        // ===============================
+        // メインアプリケーションクラス
+        // ===============================
+        class RoutineApp {
+            constructor() {
+                this.dataManager = new DataManager();
+                this.ui = new UIManager();
+                this.notifications = new NotificationManager();
+            }
+
+            /**
+             * アプリケーションの初期化
+             */
+            async init() {
+                try {
+                    this.ui.setLoading(true);
+
+                    // データ読み込み
+                    const storageWorking = this.dataManager.load();
+                    this.ui.updateStorageStatus(storageWorking);
+
+                    // UI初期化
+                    this.ui.init();
+
+                    // 今日の記録を読み込み
+                    this.ui.loadTodayRecord(this.dataManager.getTodayRecord());
+
+                    // 設定を読み込み
+                    this.ui.loadSettings(this.dataManager.settings);
+
+                    // 継続日数を更新
+                    this.updateStreaks();
+
+                    // 履歴を更新
+                    this.ui.updateHistory();
+
+                    // 通知設定
+                    await this.notifications.requestPermission();
+                    this.notifications.setup(this.dataManager.settings);
+
+                } catch (error) {
+                    console.error('App initialization failed:', error);
+                    this.ui.showToast('アプリの初期化に失敗しました', 'error');
+                } finally {
+                    this.ui.setLoading(false);
+                }
+            }
+
+            /**
+             * 全記録の保存
+             */
+            saveRecord() {
+                try {
+                    this.ui.setLoading(true);
+                    const recordData = this.collectAllRecordData();
+                    
+                    if (this.dataManager.saveRecord(recordData)) {
+                        this.updateStreaks();
+                        this.ui.showToast('記録を保存しました！');
+                    } else {
+                        this.ui.showToast('データの保存に失敗しました', 'error');
+                    }
+                } catch (error) {
+                    console.error('Save record failed:', error);
+                    this.ui.showToast('記録の保存中にエラーが発生しました', 'error');
+                } finally {
+                    this.ui.setLoading(false);
+                }
+            }
+
+            /**
+             * 個別カテゴリの保存
+             */
+            saveExercise() { this.savePartialRecord('exercise', '💪 運動'); }
+            saveMassage() { this.savePartialRecord('massage', '🫧 マッサージ'); }
+            saveStudy() { this.savePartialRecord('study', '📚 勉強'); }
+            saveReading() { this.savePartialRecord('reading', '📖 読書'); }
+            saveSpending() { this.savePartialRecord('spending', '💰 嗜好品出費'); }
+
+            /**
+             * 部分的な記録保存
+             */
+            savePartialRecord(category, categoryName) {
+                try {
+                    this.ui.setLoading(true);
+
+                    // 既存の記録を取得
+                    let existingRecord = this.dataManager.getTodayRecord() || this.createEmptyRecord();
+
+                    // 指定されたカテゴリのデータのみ更新
+                    existingRecord[category] = this.collectCategoryData(category);
+
+                    if (this.dataManager.saveRecord(existingRecord)) {
+                        this.updateStreaks();
+                        this.ui.showToast(`${categoryName}を記録しました！`);
+                    } else {
+                        this.ui.showToast(`${categoryName}の保存に失敗しました`, 'error');
+                    }
+                } catch (error) {
+                    console.error(`Save ${category} failed:`, error);
+                    this.ui.showToast(`${categoryName}の保存中にエラーが発生しました`, 'error');
+                } finally {
+                    this.ui.setLoading(false);
+                }
+            }
+
+            /**
+             * 空の記録データを作成
+             */
+            createEmptyRecord() {
+                return {
+                    date: Utils.getToday(),
+                    exercise: { completed: false, pushups: 0, situps: 0, squats: 0 },
+                    massage: { completed: false, time: 0 },
+                    study: {
+                        completed: false,
+                        english: false, bookkeeping: false, fp: false, ai: false,
+                        englishMemo: '', bookkeepingMemo: '', fpMemo: '', aiMemo: ''
+                    },
+                    reading: { completed: false, time: 0, title: '' },
+                    spending: {
+                        completed: false,
+                        coffee: 0, snacks: 0, alcohol: 0, cigarettes: 0, others: 0,
+                        othersMemo: '', total: 0
+                    }
+                };
+            }
+
+            /**
+             * カテゴリ別データ収集
+             */
+            collectCategoryData(category) {
+                const collectors = {
+                    exercise: () => this.collectExerciseData(),
+                    massage: () => this.collectMassageData(),
+                    study: () => this.collectStudyData(),
+                    reading: () => this.collectReadingData(),
+                    spending: () => this.collectSpendingData()
+                };
+
+                return collectors[category]?.() || {};
+            }
+
+            /**
+             * 運動データの収集
+             */
+            collectExerciseData() {
+                const pushups = Utils.validateNumber(document.getElementById('pushups')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const situps = Utils.validateNumber(document.getElementById('situps')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const squats = Utils.validateNumber(document.getElementById('squats')?.value, 0, CONFIG.LIMITS.EXERCISE_MAX);
+                const completed = pushups > 0 || situps > 0 || squats > 0;
+
+                return { completed, pushups, situps, squats };
+            }
+
+            /**
+             * マッサージデータの収集
+             */
+            collectMassageData() {
+                const time = Utils.validateNumber(document.getElementById('massage-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
+                const completed = time > 0;
+
+                return { completed, time };
+            }
+
+            /**
+             * 勉強データの収集
+             */
+            collectStudyData() {
+                const studyData = {
+                    english: document.getElementById('english')?.checked || false,
+                    bookkeeping: document.getElementById('bookkeeping')?.checked || false,
+                    fp: document.getElementById('fp')?.checked || false,
+                    ai: document.getElementById('ai')?.checked || false
+                };
+
+                // メモの収集
+                CONFIG.SUBJECTS.forEach(subject => {
+                    const memo = Utils.validateText(document.getElementById(`${subject}-memo`)?.value, CONFIG.LIMITS.MEMO_MAX);
+                    studyData[`${subject}Memo`] = memo;
+                });
+
+                studyData.completed = Object.values(studyData).some(value => typeof value === 'boolean' && value);
+
+                return studyData;
+            }
+
+            /**
+             * 読書データの収集
+             */
+            collectReadingData() {
+                const time = Utils.validateNumber(document.getElementById('reading-time')?.value, 0, CONFIG.LIMITS.TIME_MAX);
+                const title = Utils.validateText(document.getElementById('book-title')?.value, CONFIG.LIMITS.TEXT_MAX);
+                const completed = time > 0;
+
+                return { completed, time, title };
+            }
+
+            /**
+             * 嗜好品データの収集
+             */
+            collectSpendingData() {
+                const spendingData = {
+                    coffee: Utils.validateNumber(document.getElementById('coffee-amount')?.value, 0, CONFIG.LIMITS.SPENDING_MAX),
+                    snacks: Utils.validateNumber(document.getElementById('snacks-amount')?.value, 0, CONFIG.LIMITS.SPENDING_MAX),
+                    alcohol: Utils.validateNumber(document.getElementById('alcohol-amount')?.value, 0, CONFIG.LIMITS.SPENDING_MAX),
+                    cigarettes: Utils.validateNumber(document.getElementById('cigarettes-amount')?.value, 0, CONFIG.LIMITS.SPENDING_MAX),
+                    others: Utils.validateNumber(document.getElementById('others-amount')?.value, 0, CONFIG.LIMITS.SPENDING_MAX),
+                    othersMemo: Utils.validateText(document.getElementById('others-memo')?.value, 50)
+                };
+
+                // 合計計算
+                spendingData.total = CONFIG.SPENDING_ITEMS.reduce((sum, item) => sum + spendingData[item], 0);
+                spendingData.completed = spendingData.total > 0;
+
+                return spendingData;
+            }
+
+            /**
+             * 全記録データの収集
+             */
+            collectAllRecordData() {
+                return {
+                    date: Utils.getToday(),
+                    exercise: this.collectExerciseData(),
+                    massage: this.collectMassageData(),
+                    study: this.collectStudyData(),
+                    reading: this.collectReadingData(),
+                    spending: this.collectSpendingData()
+                };
+            }
+
+            /**
+             * 継続日数の更新
+             */
+            updateStreaks() {
+                const streaks = {};
+                CONFIG.CATEGORIES.forEach(category => {
+                    streaks[category] = this.dataManager.calculateStreak(category);
+                });
+                this.ui.updateStreaks(streaks);
+            }
+
+            /**
+             * 設定の保存
+             */
+            saveSettings() {
+                try {
+                    this.ui.setLoading(true);
+
+                    // 設定データの収集
+                    this.dataManager.settings = {
+                        ...this.dataManager.settings,
+                        notificationEnabled: document.getElementById('notification-enabled')?.checked || false,
+                        notificationTime1: document.getElementById('notification-time-1')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME_1,
+                        notificationTime2: document.getElementById('notification-time-2')?.value || CONFIG.DEFAULTS.NOTIFICATION_TIME_2,
+                        version: CONFIG.VERSION
+                    };
+
+                    if (this.dataManager.save()) {
+                        this.notifications.setup(this.dataManager.settings);
+                        this.ui.showToast('設定を保存しました！');
+                    } else {
+                        this.ui.showToast('設定の保存に失敗しました', 'error');
+                    }
+                } catch (error) {
+                    console.error('Save settings failed:', error);
+                    this.ui.showToast('設定の保存中にエラーが発生しました', 'error');
+                } finally {
+                    this.ui.setLoading(false);
+                }
+            }
+
+            /**
+             * データのエクスポート
+             */
+            exportData() {
+                try {
+                    const exportData = {
+                        records: this.dataManager.data.records,
+                        settings: this.dataManager.settings,
+                        version: CONFIG.VERSION,
+                        exportDate: new Date().toISOString()
+                    };
+
+                    const dataStr = JSON.stringify(exportData, null, 2);
+                    const filename = `routine_app_backup_v${CONFIG.VERSION}_${Utils.getToday()}.json`;
+
+                    Utils.downloadFile(dataStr, filename);
+                    this.ui.showToast('データをエクスポートしました！');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    this.ui.showToast('エクスポートに失敗しました', 'error');
+                }
+            }
+
+            /**
+             * データのインポート
+             */
+            importData() {
+                document.getElementById('import-file')?.click();
+            }
+
+            /**
+             * インポートファイルの処理
+             */
+            handleImportFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+
+                        if (!this.validateImportData(importedData)) {
+                            this.ui.showToast('無効なデータファイルです', 'error');
+                            return;
+                        }
+
+                        if (this.confirmImport()) {
+                            this.performImport(importedData);
+                        }
+                    } catch (error) {
+                        console.error('Import failed:', error);
+                        this.ui.showToast('ファイルの読み込みに失敗しました', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+                event.target.value = '';
+            }
+
+            /**
+             * インポートデータの検証
+             */
+            validateImportData(data) {
+                return data && data.records && data.settings;
+            }
+
+            /**
+             * インポート確認
+             */
+            confirmImport() {
+                return confirm('現在のデータを上書きしてインポートしますか？\n（現在のデータは失われます）');
+            }
+
+            /**
+             * インポート実行
+             */
+            performImport(importedData) {
+                try {
+                    this.dataManager.data = this.dataManager.migrateData(importedData);
+                    this.dataManager.settings = { ...this.dataManager.settings, ...importedData.settings };
+                    this.dataManager.settings.version = CONFIG.VERSION;
+
+                    if (this.dataManager.save()) {
+                        this.ui.loadTodayRecord(this.dataManager.getTodayRecord());
+                        this.ui.loadSettings(this.dataManager.settings);
+                        this.updateStreaks();
+                        this.ui.updateHistory();
+                        this.ui.showToast('データをインポートしました！');
+                    } else {
+                        this.ui.showToast('インポートに失敗しました', 'error');
+                    }
+                } catch (error) {
+                    console.error('Import processing failed:', error);
+                    this.ui.showToast('インポート処理中にエラーが発生しました', 'error');
+                }
+            }
+
+            /**
+             * 全データの削除
+             */
+            clearAllData() {
+                if (!this.confirmClearData()) return;
+
+                try {
+                    if (this.dataManager.clear()) {
+                        this.notifications.clear();
+                        this.resetUI();
+                        this.ui.showToast('全データを削除しました');
+                    } else {
+                        this.ui.showToast('データ削除に失敗しました', 'error');
+                    }
+                } catch (error) {
+                    console.error('Clear data failed:', error);
+                    this.ui.showToast('データ削除中にエラーが発生しました', 'error');
+                }
+            }
+
+            /**
+             * データ削除の確認
+             */
+            confirmClearData() {
+                return confirm('本当に全てのデータを削除しますか？\n（この操作は取り消せません）') &&
+                       confirm('最終確認：全データを削除しますか？');
+            }
+
+            /**
+             * UI初期状態にリセット
+             */
+            resetUI() {
+                this.ui.loadTodayRecord(null);
+                this.ui.loadSettings(this.dataManager.settings);
+                this.updateStreaks();
+                this.ui.updateHistory();
+            }
+        }
+
+        // ===============================
+        // アプリケーション初期化
+        // ===============================
+        let app;
+
+        /**
+         * アプリケーションの初期化
+         */
+        function initializeApp() {
+            app = new RoutineApp();
+            app.init().catch(error => {
+                console.error('Failed to initialize app:', error);
+            });
+        }
+
+        // DOMの読み込み完了後にアプリを初期化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+</body>
+</html>
